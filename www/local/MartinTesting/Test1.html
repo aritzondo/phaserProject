@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script type="text/javascript" src="..\v2\build\phaser.min.js"></script>
+</head>
+<body>
+
+<script type="text/javascript">
+    
+    var game = new Phaser.Game(800, 600, Phaser.AUTO, '', {preload: preload, create: create, update: update});
+    
+    function preload(){
+        // Caramos imagenes
+        game.load.spritesheet('dude', 'assets/dude.png', 32, 48);
+        game.load.image('sky', 'assets/sky.png');
+        game.load.image('ground', 'assets/platform.png');
+    };
+
+    var sky;
+    var player;
+    var platforms;
+    var platformData = [
+      [0, 568, 0.6, 1], [300, 468, 0.5, 1], [600, 368, 1, 1],
+    ];
+    
+    function create() {
+        //Estalecer cosas iniciales
+
+        //  Resize our game world to be a 2000 x 2000 square
+        game.world.setBounds(0, 0, 2000, 600);
+
+        //  We're going to be using physics, so enable the Arcade Physics system
+        game.physics.startSystem(Phaser.Physics.ARCADE);
+
+        //  A simple background for our game
+        sky = game.add.tileSprite(0, 0, 800, 600, 'sky');
+        sky.fixedToCamera = true;
+
+        // Put the platforms
+        platforms = game.add.group();
+        platforms.enableBody = true;
+        //platforms.fixedToCamera = true;
+        for(var i = 0; i < platformData.length; i++)
+        {
+            var newPlatform = platforms.create(platformData[i][0], platformData[i][1], 'ground');
+            newPlatform.scale.setTo(platformData[i][2], platformData[i][3]);
+            newPlatform.body.immovable = true;
+            console.log(i);
+        }
+
+        // Player
+        player = game.add.sprite(32, game.world.height - 150, 'dude');
+        game.physics.arcade.enable(player);
+            //Physics
+        player.body.bounce.y = 0;
+        player.body.gravity.y = 300;
+        player.body.collideWorldBounds = true;
+            //Animations
+        player.animations.add('right', [5, 6, 7, 8], 10, true);
+            //Camera anchor
+        player.anchor.setTo(0.5, 0.5);
+
+        //  Our controls.
+        cursors = game.input.keyboard.createCursorKeys();
+        //space = game.input.keyboard.addKey(space);
+    };
+
+    function update() {
+        // Flujo del jueo
+
+        //  Collide the player and the stars with the platforms
+        game.physics.arcade.collide(player, platforms);
+
+        //  Set the players velocity (movement)
+        player.body.velocity.x = 150;
+        player.animations.play('right');
+        game.camera.x += 2;
+
+        // Camera
+        sky.tilePosition.x = -game.camera.x;
+        sky.tilePosition.y = -game.camera.y;
+
+        //  Allow the player to jump if they are touching the ground.
+        if (cursors.up.isDown && player.body.touching.down)
+        {
+            player.body.velocity.y = -300;
+        }
+
+        // Move the platforms with the camera
+        //for(var i = 0; i < platforms.length; i++){
+            //platforms[i].x = platformData[i][0] - game.camera.x;
+        //}
+
+    };
+
+</script>
+
+</body>
+</html>
