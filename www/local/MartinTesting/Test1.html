@@ -9,44 +9,46 @@
 
 <script type="text/javascript">
     
-    var game = new Phaser.Game(800, 600, Phaser.AUTO, '', {preload: preload, create: create, update: update});
+    var game = new Phaser.Game(248*4, 108*4, Phaser.AUTO, '', {preload: preload, create: create, update: update});
     
     function preload(){
         // Caramos imagenes
         game.load.spritesheet('dude', 'assets/dude.png', 32, 48);
-        game.load.image('sky', 'assets/sky.png');
-        game.load.image('ground', 'assets/platform.png');
+        game.load.spritesheet('sky', '../images/metroid_sky.png',248,108);
+        game.load.spritesheet('ground', '../images/metroid_tiles.png',32,32);
     };
 
     var sky;
     var player;
     var platforms;
     var platformData = [
-      [0, 568, 0.6, 1], [300, 468, 0.5, 1], [600, 368, 1, 1],
+      [0, 568], [300, 468], [600, 368],
     ];
     
     function create() {
         //Estalecer cosas iniciales
 
         //  Resize our game world to be a 2000 x 2000 square
-        game.world.setBounds(0, 0, 2000, 600);
+        //game.world.setBounds(0, 0, 800, 600);
 
         //  We're going to be using physics, so enable the Arcade Physics system
         game.physics.startSystem(Phaser.Physics.ARCADE);
 
         //  A simple background for our game
-        sky = game.add.tileSprite(0, 0, 800, 600, 'sky');
+        sky = game.add.sprite(0, 0,'sky');
+        sky.scale.setTo(3,3);
         sky.fixedToCamera = true;
 
         // Put the platforms
         platforms = game.add.group();
         platforms.enableBody = true;
-        //platforms.fixedToCamera = true;
-        for(var i = 0; i < platformData.length; i++)
+
+        for(var i = 0; i < game.width/32; i++)
         {
-            var newPlatform = platforms.create(platformData[i][0], platformData[i][1], 'ground');
-            newPlatform.scale.setTo(platformData[i][2], platformData[i][3]);
-            newPlatform.body.immovable = true;
+            var newPlatform = platforms.create(i*32, game.height-32, 'ground');
+            newPlatform.body.immovable=true;
+            newPlatform.body.velocity.x=-150;
+            newPlatform.frame=4;
             console.log(i);
         }
 
@@ -69,29 +71,34 @@
 
     function update() {
         // Flujo del jueo
-
         //  Collide the player and the stars with the platforms
         game.physics.arcade.collide(player, platforms);
 
         //  Set the players velocity (movement)
-        player.body.velocity.x = 150;
+        //player.body.velocity.x = 150;
         player.animations.play('right');
-        game.camera.x += 2;
 
         // Camera
-        sky.tilePosition.x = -game.camera.x;
-        sky.tilePosition.y = -game.camera.y;
+        //sky.tilePosition.x = -game.camera.x;
+        //sky.tilePosition.y = -game.camera.y;
 
-        //  Allow the player to jump if they are touching the ground.
+        //  Allow the player to jump if they are touching the ground
         if (cursors.up.isDown && player.body.touching.down)
         {
             player.body.velocity.y = -300;
         }
+        if(player.body.touching.down){
+            player.body.velocity.x=150;
+        }
+        else{
+            player.body.velocity.x=0;
+        }
 
         // Move the platforms with the camera
-        //for(var i = 0; i < platforms.length; i++){
-            //platforms[i].x = platformData[i][0] - game.camera.x;
-        //}
+        if(platforms[0].body.x<-32){
+            platform=platforms.pop();
+            platforms.push(platform);
+        }
 
     };
 

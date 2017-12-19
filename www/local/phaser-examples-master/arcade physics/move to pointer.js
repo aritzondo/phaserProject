@@ -36,7 +36,7 @@ function moveBall() {
     game.physics.arcade.moveToPointer(ball, 100);
 
     //  The maxTime parameter lets you control how fast it will arrive at the Pointer coords
-    // game.physics.arcade.moveToPointer(ball, 100, game.input.activePointer, 1000);
+     game.physics.arcade.moveToPointer(ball, 100, game.input.activePointer, 1000);
 
 
 }
