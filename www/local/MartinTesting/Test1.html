@@ -16,6 +16,7 @@
         game.load.spritesheet('dude', 'assets/dude.png', 32, 48);
         game.load.spritesheet('sky', '../images/metroid_sky.png',248,108);
         game.load.spritesheet('ground', '../images/metroid_tiles.png',32,32);
+        game.load.spritesheet('samus', '../images/metroid_samus.png',32,48);
     };
 
     var sky;
@@ -53,7 +54,7 @@
         }
 
         // Player
-        player = game.add.sprite(32, game.world.height - 150, 'dude');
+        player = game.add.sprite(32, game.world.height - 150, 'samus');
         game.physics.arcade.enable(player);
             //Physics
         player.body.bounce.y = 0;
@@ -95,10 +96,10 @@
         }
 
         // Move the platforms with the camera
-        if(platforms[0].body.x<-32){
+        /*if(platforms[0].body.x<-32){
             platform=platforms.pop();
             platforms.push(platform);
-        }
+        }*/
 
     };
 

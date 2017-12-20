@@ -5,6 +5,7 @@ function preload(){
     game.load.spritesheet('dude', '../MartinTesting/assets/dude.png', 32, 48);
     game.load.spritesheet('sky', '../images/metroid_sky.png',248,108);
     game.load.spritesheet('ground', '../images/metroid_tiles.png',32,32);
+    game.load.spritesheet('samus', '../images/metroid_samus.png',42,49);
 };
 
 var sky;
