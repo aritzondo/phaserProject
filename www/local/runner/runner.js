@@ -5,15 +5,16 @@ function preload(){
     game.load.spritesheet('dude', '../MartinTesting/assets/dude.png', 32, 48);
     game.load.spritesheet('sky', '../images/metroid_sky.png',248,108);
     game.load.spritesheet('ground', '../images/metroid_tiles.png',32,32);
-    game.load.spritesheet('samus', '../images/metroid_samus.png',42,49);
+    game.load.spritesheet('samus', '../images/Samus_sprites.png',42,40);
+    game.load.image('bullet', '../images/Space%20Lemon.png');
 };
 
 var sky;
 var player;
 var platforms;
-var platformData = [
-    [0, 568], [300, 468], [600, 368],
-];
+var bullets;
+//keys
+var cursors,space;
 
 function create() {
     //Estalecer cosas iniciales
@@ -40,13 +41,21 @@ function create() {
         newPlatform.body.velocity.x=-150;
         newPlatform.frame=4;
     }
-
-
-    // Player
-    player=createPlayer();
     //  Our controls.
     cursors = game.input.keyboard.createCursorKeys();
-    //space = game.input.keyboard.addKey(space);
+    space = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
+    // Player
+    player=createPlayer();
+
+    //  Our bullet group
+    bullets = game.add.group();
+    bullets.enableBody = true;
+    bullets.physicsBodyType = Phaser.Physics.ARCADE;
+    bullets.createMultiple(30, 'bullet', 0, false);
+    bullets.setAll('anchor.x', 0.5);
+    bullets.setAll('anchor.y', 0.5);
+    bullets.setAll('outOfBoundsKill', true);
+    bullets.setAll('checkWorldBounds', true);
 };
 
 function update() {
@@ -62,5 +71,9 @@ function update() {
         platform.x=game.width;
         platforms.addChildAt(platform,platforms.length);
     }
+    game.physics.arcade.overlap(bullets,platforms,bulletHitWall,null,this);
+};
 
+function bulletHitWall(bullet,platform){
+    bullet.kill();
 };
