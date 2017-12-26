@@ -7,12 +7,15 @@ function preload(){
     game.load.spritesheet('ground', '../images/metroid_tiles.png',32,32);
     game.load.spritesheet('samus', '../images/Samus_sprites.png',42,40);
     game.load.image('bullet', '../images/Space%20Lemon.png');
+    game.load.image('metroid','../images/Metroid_basic.png')
 };
 
 var sky;
 var player;
 var platforms;
 var bullets;
+var enemyPull;
+var enemies;
 //keys
 var cursors,space;
 
@@ -56,6 +59,15 @@ function create() {
     bullets.setAll('anchor.y', 0.5);
     bullets.setAll('outOfBoundsKill', true);
     bullets.setAll('checkWorldBounds', true);
+
+    //create one enemy
+    enemies = [];
+    enemyPull=[];
+    //enemies.enableBody=true;
+    //enemies.physicsBodyType=Phaser.Physics.ARCADE;
+    for(var i=0;i<10;i++) {
+        enemyPull.push(CreateEnemy());
+    }
 };
 
 function update() {
@@ -64,12 +76,14 @@ function update() {
     game.physics.arcade.collide(player.obj, platforms);
 
     player.update(cursors);
+    updateEnemies();
 
     // Move the platforms with the camera
     if(platforms.children[0].x<-32){
         platform=platforms.children.shift();
         platform.x=game.width;
         platforms.addChildAt(platform,platforms.length);
+        checkStuffToAppear();
     }
     game.physics.arcade.overlap(bullets,platforms,bulletHitWall,null,this);
 };
@@ -77,3 +91,23 @@ function update() {
 function bulletHitWall(bullet,platform){
     bullet.kill();
 };
+
+function checkStuffToAppear(){
+    var rand=game.rnd.between(0,4);
+    if(rand==1){
+        if(enemyPull.length>0){
+            enemies.push(enemyPull.pop());
+            enemies[0].reset();
+        }
+    }
+};
+
+function updateEnemies(){
+    for(var i=0;i<enemies.length;i++){
+        enemies[i].update();
+    }
+};
+
+function resetGame(){
+    bullets.setAll('exists',false);
+}

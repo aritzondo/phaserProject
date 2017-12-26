@@ -1,5 +1,6 @@
 function createPlayer(){
     var player={
+        life:10,
         fireRate:100,
         nextFire:game.time.now,
         isShooting:false,
@@ -11,7 +12,6 @@ function createPlayer(){
             //Physics
             this.obj.body.bounce.y = 0;
             this.obj.body.gravity.y = 300;
-            this.obj.body.collideWorldBounds = true;
             //Animations
             //this.obj.animations.add('right', [5, 6, 7, 8], 10, true);
                 //That one 'works' with 41, 50
@@ -26,6 +26,9 @@ function createPlayer(){
 
         },
         update: function(cursors){
+            if(this.life<=0){
+                resetGame();
+            }
             if(space.isDown&&this.obj.body.touching.down){
                 this.isShooting=true;
             }
@@ -74,6 +77,9 @@ function createPlayer(){
                 bullet.reset(this.obj.x, this.obj.y);
                 bullet.rotation = game.physics.arcade.moveToPointer(bullet, 1000, game.input.activePointer, 500);
             }
+        },
+        hitByEnemy:function(enemy){
+            this.life-=10;
         }
     }
     player.init();
