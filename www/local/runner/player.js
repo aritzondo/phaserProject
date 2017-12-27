@@ -1,6 +1,6 @@
 function createPlayer(){
     var player={
-        life:10,
+        life:20,
         fireRate:100,
         nextFire:game.time.now,
         isShooting:false,
@@ -27,7 +27,7 @@ function createPlayer(){
         },
         update: function(cursors){
             if(this.life<=0){
-                resetGame();
+                //resetear el juego
             }
             if(space.isDown&&this.obj.body.touching.down){
                 this.isShooting=true;
@@ -79,6 +79,7 @@ function createPlayer(){
             }
         },
         hitByEnemy:function(enemy){
+            console.log("hit");
             this.life-=10;
         }
     }
