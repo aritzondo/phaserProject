@@ -68,9 +68,9 @@ function create() {
 
     createAliens();
 
-    //  The score
+    //  The currScore
     // scoreString = 'Score : ';
-    // scoreText = game.add.text(10, 10, scoreString + score, { fontSize: '34px', fill: '#fff' });
+    // scoreText = game.add.text(10, 10, scoreString + currScore, { fontSize: '34px', fill: '#fff' });
 
     //  Lives
     // lives = game.add.group();
@@ -194,9 +194,9 @@ function collisionHandler (bullet, alien) {
     bullet.kill();
     alien.kill();
 
-    //  Increase the score
-    score += 20;
-    scoreText.content = scoreString + score;
+    //  Increase the currScore
+    currScore += 20;
+    scoreText.content = scoreString + currScore;
 
     //  And create an explosion :)
     var explosion = explosions.getFirstDead();
@@ -205,8 +205,8 @@ function collisionHandler (bullet, alien) {
 
     if (aliens.countLiving() == 0)
     {
-        score += 1000;
-        scoreText.content = scoreString + score;
+        currScore += 1000;
+        scoreText.content = scoreString + currScore;
 
         enemyBullets.callAll('kill',this);
         stateText.content = " You Won, \n Click to restart";

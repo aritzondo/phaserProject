@@ -70,7 +70,7 @@ Bomber.Game.prototype = {
         this.emitter.setYSpeed(-50, 50);
 
         this.score = 0;
-        this.scoreText = this.add.bitmapText(8, 360, 'rollingThunder', 'score: 0', 16);
+        this.scoreText = this.add.bitmapText(8, 360, 'rollingThunder', 'currScore: 0', 16);
 
         this.add.image(390, 360, 'photonstorm');
 
@@ -144,7 +144,7 @@ Bomber.Game.prototype = {
 
 	update: function () {
 
-        this.scoreText.text = 'score:' + this.score;
+        this.scoreText.text = 'currScore:' + this.score;
 
         if (this.gameLost || this.gameWon)
         {

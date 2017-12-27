@@ -69,7 +69,7 @@ function create() {
 
     createAliens();
 
-    //  The score
+    //  The currScore
     scoreString = 'Score : ';
     scoreText = game.add.text(10, 10, scoreString + score, { font: '34px Arial', fill: '#fff' });
 
@@ -191,7 +191,7 @@ function collisionHandler (bullet, alien) {
     bullet.kill();
     alien.kill();
 
-    //  Increase the score
+    //  Increase the currScore
     score += 20;
     scoreText.text = scoreString + score;
 

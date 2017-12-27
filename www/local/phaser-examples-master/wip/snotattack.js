@@ -127,7 +127,7 @@ var splatterTexture;
 var heads;
 var bodies;
 
-// var score = 0;
+// var currScore = 0;
 // var scoreString = '';
 // var scoreText;
 
@@ -217,9 +217,9 @@ function collisionHandler (bullet, slime) {
 
     if (slime.shot())
     {
-        //  Increase the score
-        // score += 20;
-        // scoreText.text = scoreString + score;
+        //  Increase the currScore
+        // currScore += 20;
+        // scoreText.text = scoreString + currScore;
 
         var sp = splats[game.rnd.integerInRange(1, 3)];
         var sx = slime.x + game.rnd.integerInRange(-8, 8);

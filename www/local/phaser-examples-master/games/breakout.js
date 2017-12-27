@@ -70,7 +70,7 @@ function create() {
 
     ball.events.onOutOfBounds.add(ballLost, this);
 
-    scoreText = game.add.text(32, 550, 'score: 0', { font: "20px Arial", fill: "#ffffff", align: "left" });
+    scoreText = game.add.text(32, 550, 'currScore: 0', { font: "20px Arial", fill: "#ffffff", align: "left" });
     livesText = game.add.text(680, 550, 'lives: 3', { font: "20px Arial", fill: "#ffffff", align: "left" });
     introText = game.add.text(game.world.centerX, 400, '- click to start -', { font: "40px Arial", fill: "#ffffff", align: "center" });
     introText.anchor.setTo(0.5, 0.5);
@@ -155,14 +155,14 @@ function ballHitBrick (_ball, _brick) {
 
     score += 10;
 
-    scoreText.text = 'score: ' + score;
+    scoreText.text = 'currScore: ' + score;
 
     //  Are they any bricks left?
     if (bricks.countLiving() == 0)
     {
         //  New level starts
         score += 1000;
-        scoreText.text = 'score: ' + score;
+        scoreText.text = 'currScore: ' + score;
         introText.text = '- Next Level -';
 
         //  Let's move the ball back to the paddle

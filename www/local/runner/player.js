@@ -1,10 +1,11 @@
 function createPlayer(){
     var player={
-        life:20,
+        life:99,
         fireRate:100,
         nextFire:game.time.now,
         isShooting:false,
         obj:0,
+        arrowSpeed: 0,      // Speed result of using left/right
         init: function(){
             // Player
             this.obj = game.add.sprite(32, game.world.height - 150, 'samus');
@@ -26,15 +27,24 @@ function createPlayer(){
 
         },
         update: function(cursors){
-            if(this.life<=0){
+            // Life check
+            if(this.life <= 0){
                 //resetear el juego
+                game.reset();
             }
+            // Jump
             if(space.isDown&&this.obj.body.touching.down){
                 this.isShooting=true;
             }
             else{
                 this.isShooting=false;
             }
+
+            // Set speed related to arrows
+            arrowSpeed = 0;
+            if(cursors.left.isDown) arrowSpeed -= 100;
+            if(cursors.right.isDown) arrowSpeed += 100;
+
              //  Set the players velocity (movement)
             if(!this.isShooting){
                 if(this.obj.body.touching.down) {
@@ -50,7 +60,7 @@ function createPlayer(){
             //if you are in the ground
             if(this.obj.body.touching.down) {
                 //if you press space(fire)
-                if (space.isDown) {
+                if (game.input.activePointer.isDown) {
                     this.fire();
                 }
                 //if you press up(jump)
@@ -59,11 +69,11 @@ function createPlayer(){
                     this.isShooting=false;
                 }
                 else {
-                    this.obj.body.velocity.x = 150;
+                    this.obj.body.velocity.x = 150 + arrowSpeed;
                 }
             }
             else {
-                this.obj.body.velocity.x = 0;
+                this.obj.body.velocity.x = 0 + arrowSpeed;
             }
         },
         fire:function(){

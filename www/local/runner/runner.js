@@ -17,7 +17,8 @@ var obstacles;
 var bullets;
 var enemyPull;
 var enemies;
-var score;
+var currScore = 0;
+var totalScore = 0;
 //keys
 var cursors,space;
 
@@ -63,7 +64,7 @@ function create() {
     cursors = game.input.keyboard.createCursorKeys();
     space = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
     // Player
-    player=createPlayer();
+    player = createPlayer();
 
     //  Our bullet group
     bullets = game.add.group();
@@ -87,18 +88,27 @@ function create() {
     enemyPull.setAll('anchor.y', 0.5);
     enemyPull.setAll('outOfBoundsKill', true);
     enemyPull.setAll('checkWorldBounds', true);
-    score=0;
+    currScore=0;
+
+    // App
+    reset();
 };
 
 function update() {
     // Flujo del jueo
     //  Collide the player and the stars with the platforms
-    score++;
+    currScore++;
     game.physics.arcade.collide(player.obj, platforms);
     game.physics.arcade.collide(player.obj,obstacles);
 
+    //Check if the player is out of screen
+    //We could check too in Y if there are falls
+    if(player.obj.x < -32){
+        reset();
+    }
+
     player.update(cursors);
-    //updateEnemies();
+    //Check overlaps between enemies, player and bullets
     game.physics.arcade.overlap(enemyPull,player.obj,enemyHitsPlayer,null,this);
     game.physics.arcade.overlap(enemyPull,bullets,bulletHitEnemy,null,this);
     // Move the platforms with the camera
@@ -111,6 +121,16 @@ function update() {
     game.physics.arcade.overlap(bullets,platforms,bulletHitWall,null,this);
 };
 
+// Put all the stuff in their place
+function reset(){
+    totalScore += currScore;
+    currScore = 0;
+
+    player.obj.x = 32;
+    player.obj.y = game.world.height - 150;
+    player.life = 99;
+};
+
 function bulletHitWall(bullet,platform){
     bullet.kill();
 };
@@ -121,6 +141,7 @@ function enemyHitsPlayer(plyer,enemy){
 }
 
 function bulletHitEnemy(enemy,bullet){
+    currScore += 100;   // We will later apply a score attribute of the enemy
     enemy.kill();
     bullet.kill();
 }
@@ -158,6 +179,7 @@ function render () {
 
     //game.debug.text('Active Bullets: ' + bullets.countLiving() + ' / ' + bullets.length, 32, 32);
     game.debug.text('Life: ' + player.life , 32, 32);
-    game.debug.text('Score: '+score,game.width-150,32);
+    game.debug.text('Total Score: '+ totalScore,game.width-150,32);
+    game.debug.text('Score: '+ currScore,game.width-150,64);
 
 }
