@@ -21,6 +21,7 @@ var currScore = 0;
 var totalScore = 0;
 //keys
 var cursors,space;
+var inMenu = false;
 
 function create() {
     //Estalecer cosas iniciales
@@ -50,8 +51,8 @@ function create() {
     }
 
     //The obstacles
-    obstacles=game.add.group();
-    obstacles.enableBody=true;
+    obstacles = game.add.group();
+    obstacles.enableBody = true;
     obstacles.createMultiple(10,'ground',0,false);
     obstacles.setAll('anchor.x', 0.5);
     obstacles.setAll('anchor.y', 0.5);
@@ -80,8 +81,8 @@ function create() {
     enemies = [];
     //enemies.enableBody=true;
     //enemies.physicsBodyType=Phaser.Physics.ARCADE;
-    enemyPull=game.add.group();
-    enemyPull.enableBody=true;
+    enemyPull = game.add.group();
+    enemyPull.enableBody = true;
     enemyPull.physicsBodyType = Phaser.Physics.ARCADE;
     enemyPull.createMultiple(10, 'metroid');
     enemyPull.setAll('anchor.x', 0.5);
@@ -95,40 +96,60 @@ function create() {
 };
 
 function update() {
-    // Flujo del jueo
-    //  Collide the player and the stars with the platforms
-    currScore++;
-    game.physics.arcade.collide(player.obj, platforms);
-    game.physics.arcade.collide(player.obj,obstacles);
+    if(!inMenu) {
+        // Flujo del jueo
+        //  Collide the player and the stars with the platforms
+        currScore++;
+        game.physics.arcade.collide(player.obj, platforms);
+        game.physics.arcade.collide(player.obj, obstacles);
 
-    //Check if the player is out of screen
-    //We could check too in Y if there are falls
-    if(player.obj.x < -32){
-        reset();
-    }
+        //Check if the player is out of screen
+        //We could check too in Y if there are falls
+        if (player.obj.x < -32) {
+            reset();
+        }
 
-    player.update(cursors);
-    //Check overlaps between enemies, player and bullets
-    game.physics.arcade.overlap(enemyPull,player.obj,enemyHitsPlayer,null,this);
-    game.physics.arcade.overlap(enemyPull,bullets,bulletHitEnemy,null,this);
-    // Move the platforms with the camera
-    if(platforms.children[0].x<-32){
-        platform=platforms.children.shift();
-        platform.x=game.width;
-        platforms.addChildAt(platform,platforms.length);
-        checkStuffToAppear();
+        player.update(cursors);
+
+        //Check overlaps between enemies, player and bullets
+        game.physics.arcade.overlap(enemyPull, player.obj, enemyHitsPlayer, null, this);
+        game.physics.arcade.overlap(enemyPull, bullets, bulletHitEnemy, null, this);
+
+        // Move the platforms with the camera
+        if (platforms.children[0].x < -32) {
+            platform = platforms.children.shift();
+            platform.x = game.width;
+            platforms.addChildAt(platform, platforms.length);
+            checkStuffToAppear();
+        }
+        game.physics.arcade.overlap(bullets, platforms, bulletHitWall, null, this);
+        game.physics.arcade.overlap(bullets, obstacles, bulletHitWall, null, this);
     }
-    game.physics.arcade.overlap(bullets,platforms,bulletHitWall,null,this);
 };
 
 // Put all the stuff in their place
 function reset(){
-    totalScore += currScore;
-    currScore = 0;
+    obstacles.callAll('kill');
+    enemyPull.callAll('kill');
+    if(!inMenu) {
+        totalScore += currScore;
+        currScore = 0;
 
-    player.obj.x = 32;
-    player.obj.y = game.world.height - 150;
-    player.life = 99;
+        player.obj.x = 32;
+        player.obj.y = game.world.height - 150;
+        player.life = 99;
+    }
+    else{   // Button shit
+        //game.stage.backgroundColor = '#182d3b';
+
+        //background = game.add.tileSprite(0, 0, 800, 600, 'background');
+
+        /*button = game.add.button(game.world.centerX - 95, 400, 'button', actionOnClick, this, 2, 1, 0);
+
+        button.onInputOver.add(over, this);
+        button.onInputOut.add(out, this);
+        button.onInputUp.add(up, this);*/
+    }
 };
 
 function bulletHitWall(bullet,platform){
@@ -147,21 +168,28 @@ function bulletHitEnemy(enemy,bullet){
 }
 
 function checkStuffToAppear(){
-    var rand=game.rnd.between(0,6);
-    if(rand==1){
-        if(enemyPull.length>0){
+    var rand = game.rnd.between(0,6);
+    if(rand == 1){
+        if(enemyPull.length > 0){
             var enemy = enemyPull.getFirstDead();
 
             enemy.reset(game.width - 32, game.height - 150);
 
-            enemy.rotation = this.game.physics.arcade.moveToObject(enemy, player.obj, 250)+180;
+            enemy.rotation = this.game.physics.arcade.moveToObject(enemy, player.obj, 250) + 180;
         }
     }
-    else if(rand==2){
-        var obstacle=obstacles.getFirstDead();
-        obstacle.reset(game.width-32,game.height-64);
-        obstacle.body.velocity.x=-150;
-        obstacle.body.immovable=true;
+    else if(rand == 2){
+        var obstacle = obstacles.getFirstDead();
+        if(obstacle) {
+            obstacle.reset(game.width + 14, game.height - 48);
+            obstacle.body.velocity.x = -150;
+            obstacle.body.immovable = true;
+
+            obstacle = obstacles.getFirstDead();
+            obstacle.reset(game.width + 14, game.height - 80);
+            obstacle.body.velocity.x = -150;
+            obstacle.body.immovable = true;
+        }
     }
 };
 

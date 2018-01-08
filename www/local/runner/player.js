@@ -1,18 +1,19 @@
 function createPlayer(){
     var player={
         life:99,
+        lifeTanks: 0,
         fireRate:100,
         nextFire:game.time.now,
         isShooting:false,
         obj:0,
-        arrowSpeed: 0,      // Speed result of using left/right
+        //arrowSpeed: 0,      // Speed result of using left/right
         init: function(){
             // Player
             this.obj = game.add.sprite(32, game.world.height - 150, 'samus');
             game.physics.arcade.enable(this.obj);
             //Physics
             this.obj.body.bounce.y = 0;
-            this.obj.body.gravity.y = 300;
+            this.obj.body.gravity.y = 1200;
             //Animations
             //this.obj.animations.add('right', [5, 6, 7, 8], 10, true);
                 //That one 'works' with 41, 50
@@ -30,10 +31,11 @@ function createPlayer(){
             // Life check
             if(this.life <= 0){
                 //resetear el juego
-                game.reset();
+                reset();
             }
+
             // Jump
-            if(space.isDown&&this.obj.body.touching.down){
+            if(space.isDown && this.obj.body.touching.down){
                 this.isShooting=true;
             }
             else{
@@ -41,7 +43,7 @@ function createPlayer(){
             }
 
             // Set speed related to arrows
-            arrowSpeed = 0;
+            var arrowSpeed = 0;
             if(cursors.left.isDown) arrowSpeed -= 100;
             if(cursors.right.isDown) arrowSpeed += 100;
 
@@ -57,6 +59,7 @@ function createPlayer(){
             else{
                 this.obj.animations.play('shooting');
             }
+
             //if you are in the ground
             if(this.obj.body.touching.down) {
                 //if you press space(fire)
@@ -65,16 +68,27 @@ function createPlayer(){
                 }
                 //if you press up(jump)
                 else if (cursors.up.isDown) {
-                    this.obj.body.velocity.y = -300;
+                    this.obj.body.velocity.y = -600;
                     this.isShooting=false;
                 }
                 else {
-                    this.obj.body.velocity.x = 150 + arrowSpeed;
+                    // Right border control
+                    if(this.obj.body.x + this.obj.body.velocity.x < game.width - 80) {
+                        this.obj.body.velocity.x = 150 + arrowSpeed;
+                    }
+                    else{
+                        this.obj.body.velocity.x = 150;
+                    }
                 }
             }
             else {
                 this.obj.body.velocity.x = 0 + arrowSpeed;
             }
+
+            // Right border control
+            /*if(this.obj.body.x > game.width - 32){
+                this.obj.body.x = game.width - 32;
+            }*/
         },
         fire:function(){
             this.isShooting=true;
