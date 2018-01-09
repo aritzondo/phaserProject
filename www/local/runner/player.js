@@ -72,9 +72,12 @@ function createPlayer(){
                     this.isShooting=false;
                 }
                 else {
-                    // Right border control
+                    // border control
                     if(this.obj.body.x + this.obj.body.velocity.x < game.width - 80) {
                         this.obj.body.velocity.x = 150 + arrowSpeed;
+                    }
+                    else if(this.obj.body.y+this.obj.body.velocity.y<game.height){
+                        reset();
                     }
                     else{
                         this.obj.body.velocity.x = 150;

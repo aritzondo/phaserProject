@@ -8,6 +8,7 @@ function preload(){
     game.load.spritesheet('samus', '../images/Samus_sprites.png',42,40);
     game.load.image('bullet', '../images/Space%20Lemon.png');
     game.load.image('metroid','../images/Metroid_basic.png')
+    game.load.spritesheet('button', '../phaser-examples-master/assets/buttons/button_sprite_sheet.png', 193, 71);
 };
 
 var sky;
@@ -21,7 +22,8 @@ var currScore = 0;
 var totalScore = 0;
 //keys
 var cursors,space;
-var inMenu = false;
+var inMenu = true;
+var button;
 
 function create() {
     //Estalecer cosas iniciales
@@ -92,6 +94,8 @@ function create() {
     currScore=0;
 
     // App
+    //
+    button = game.add.button(game.world.centerX - 95, 400, 'button', actionOnClick, this, 2, 1, 0);
     reset();
 };
 
@@ -102,12 +106,6 @@ function update() {
         currScore++;
         game.physics.arcade.collide(player.obj, platforms);
         game.physics.arcade.collide(player.obj, obstacles);
-
-        //Check if the player is out of screen
-        //We could check too in Y if there are falls
-        if (player.obj.x < -32) {
-            reset();
-        }
 
         player.update(cursors);
 
@@ -124,31 +122,52 @@ function update() {
         }
         game.physics.arcade.overlap(bullets, platforms, bulletHitWall, null, this);
         game.physics.arcade.overlap(bullets, obstacles, bulletHitWall, null, this);
+
+        //Check if the player is out of screen
+        //We could check too in Y if there are falls
+        if (player.obj.x < -32) {
+            reset();
+        }
+    }
+    else{
+        //si estas en el menu
     }
 };
 
 // Put all the stuff in their place
 function reset(){
-    obstacles.callAll('kill');
-    enemyPull.callAll('kill');
-    if(!inMenu) {
+    if(inMenu) {//if you were in the menu
+        button.pendingDestroy=true;
         totalScore += currScore;
         currScore = 0;
-
+        resetPlatforms();
+        player.obj.exists=true;
         player.obj.x = 32;
         player.obj.y = game.world.height - 150;
         player.life = 99;
     }
     else{   // Button shit
-        //game.stage.backgroundColor = '#182d3b';
+        obstacles.callAll('kill');
+        enemyPull.callAll('kill');
+        platforms.callAll('kill');
+        bullets.callAll('kill');
+        player.obj.exists=false;
+       button = game.add.button(game.world.centerX - 95, 400, 'button', actionOnClick, this, 2, 1, 0);
 
-        //background = game.add.tileSprite(0, 0, 800, 600, 'background');
-
-        /*button = game.add.button(game.world.centerX - 95, 400, 'button', actionOnClick, this, 2, 1, 0);
-
-        button.onInputOver.add(over, this);
+        /*button.onInputOver.add(over, this);
         button.onInputOut.add(out, this);
         button.onInputUp.add(up, this);*/
+    }
+    inMenu=!inMenu;
+};
+
+//reset the position of the platforms
+function resetPlatforms(){
+    platforms.callAll('revive');
+    for(var i = 0; i < platforms.children.length; i++)
+    {
+        platforms.children[i].x=i*32;
+        platforms.children[i].y=game.height-32;
     }
 };
 
@@ -210,4 +229,8 @@ function render () {
     game.debug.text('Total Score: '+ totalScore,game.width-150,32);
     game.debug.text('Score: '+ currScore,game.width-150,64);
 
+}
+
+function actionOnClick() {
+    reset();
 }
