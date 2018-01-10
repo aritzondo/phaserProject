@@ -1,10 +1,11 @@
 function createPlayer(){
     var player={
-        life:99,
+        life:100,
         lifeTanks: 0,
         fireRate:100,
         nextFire:game.time.now,
         isShooting:false,
+        jumpHeight:600,
         obj:0,
         //arrowSpeed: 0,      // Speed result of using left/right
         init: function(){
@@ -68,7 +69,7 @@ function createPlayer(){
                 }
                 //if you press up(jump)
                 else if (cursors.up.isDown) {
-                    this.obj.body.velocity.y = -600;
+                    this.obj.body.velocity.y = -this.jumpHeight;
                     this.isShooting=false;
                 }
                 else {

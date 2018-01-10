@@ -8,7 +8,7 @@ function preload(){
     game.load.spritesheet('samus', '../images/Samus_sprites.png',42,40);
     game.load.image('bullet', '../images/Space%20Lemon.png');
     game.load.image('metroid','../images/Metroid_basic.png')
-    game.load.spritesheet('button', '../phaser-examples-master/assets/buttons/button_sprite_sheet.png', 193, 71);
+    game.load.spritesheet('button', '../images/button.png', 330, 130);
 };
 
 var sky;
@@ -22,8 +22,14 @@ var currScore = 0;
 var totalScore = 0;
 //keys
 var cursors,space;
-var inMenu = true;
-var button;
+var inMenu = false;
+//buttons
+var buttons=[];
+//text for button
+var textButton1;
+//functions for buttons
+var functionButtons=[];
+
 
 function create() {
     //Estalecer cosas iniciales
@@ -93,9 +99,11 @@ function create() {
     enemyPull.setAll('checkWorldBounds', true);
     currScore=0;
 
-    // App
-    //
-    button = game.add.button(game.world.centerX - 95, 400, 'button', actionOnClick, this, 2, 1, 0);
+    // put the functions on the array for the buttons
+    functionButtons[0]=actionOnClick1;
+    functionButtons[1]=actionOnClick2;
+    functionButtons[2]=actionOnClick3;
+
     reset();
 };
 
@@ -137,7 +145,9 @@ function update() {
 // Put all the stuff in their place
 function reset(){
     if(inMenu) {//if you were in the menu
-        button.pendingDestroy=true;
+        for(var i=0;i<buttons.length;i++){
+            buttons[i].pendingDestroy=true;
+        }
         totalScore += currScore;
         currScore = 0;
         resetPlatforms();
@@ -152,7 +162,21 @@ function reset(){
         platforms.callAll('kill');
         bullets.callAll('kill');
         player.obj.exists=false;
-       button = game.add.button(game.world.centerX - 95, 400, 'button', actionOnClick, this, 2, 1, 0);
+        button1 = game.add.button(game.world.centerX - 95, game.world.centerY+50, 'button', actionOnClick1, this, 2, 1, 0);
+        buttons.push(button1)
+        button1.scale.setTo(0.5,0.5)
+        var style = { font: "40px Arial", wordWrap: true, wordWrapWidth: button1.width, align: "center"};
+
+        textButton1 = game.add.text(0, 0, "Resume", style);
+        button1.addChild(textButton1)
+        textButton1.centerX+=button1.width/2
+        textButton1.centerY+=button1.height/2
+        button2 = game.add.button(game.world.centerX - 195, game.world.centerY-50, 'button', actionOnClick2, this, 2, 1, 0);
+        buttons.push(button2)
+        button2.scale.setTo(0.5,0.5)
+        button3 = game.add.button(game.world.centerX +5, game.world.centerY-50, 'button', actionOnClick3, this, 2, 1, 0);
+        buttons.push(button3)
+        button3.scale.setTo(0.5,0.5)
 
         /*button.onInputOver.add(over, this);
         button.onInputOut.add(out, this);
@@ -161,6 +185,20 @@ function reset(){
     inMenu=!inMenu;
 };
 
+function initButtons(){
+    initButton(1);
+}
+ function initButton(number){
+    switch(number){
+        case 1:
+            button1 = game.add.button(game.world.centerX - 95, game.world.centerY+50, 'button', actionOnClick1, this, 2, 1, 0);
+            button1.scale.setTo(0.5,0.5)
+            var style = { font: "40px Arial", wordWrap: true, wordWrapWidth: button1.width, align: "center"};
+            textButton1 = game.add.text(0, 0, "Resume", style);
+            button1.addChild(textButton1)
+    }
+
+ }
 //reset the position of the platforms
 function resetPlatforms(){
     platforms.callAll('revive');
@@ -231,6 +269,14 @@ function render () {
 
 }
 
-function actionOnClick() {
+function actionOnClick1() {
     reset();
+}
+
+function actionOnClick2(){
+    player.life+=100;
+}
+
+function actionOnClick3(){
+    player.jumpHeight+=100;
 }
