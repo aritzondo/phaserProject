@@ -1,3 +1,4 @@
+//Function to create the player
 function createPlayer(){
     var player={
         life:99,
@@ -8,7 +9,6 @@ function createPlayer(){
         jumpHeight:600,
         obj:0,
         tanks:[new Phaser.Rectangle(64,16,24,24)],
-        //arrowSpeed: 0,      // Speed result of using left/right
         init: function(){
             // Player
             this.obj = game.add.sprite(32, game.world.height - 150, 'samus');
@@ -17,10 +17,6 @@ function createPlayer(){
             this.obj.body.bounce.y = 0;
             this.obj.body.gravity.y = 1200;
             //Animations
-            //this.obj.animations.add('right', [5, 6, 7, 8], 10, true);
-                //That one 'works' with 41, 50
-            //this.obj.animations.add('right', [140, 141, 142, 143, 144, 145, 146, 147, 148, 149], 20, true);
-                //That one 'works' with 42, 49
             this.obj.animations.add('right', [0,1,2,3,4,5,6,7,8,9], 20, true);
             this.obj.animations.add('jumping', [10,11,12,13,14,15,16,17], 20, true);
             this.obj.animations.add('shooting', [20,21,22,23,24,25,26,27,28,29], 20, true);
@@ -32,7 +28,7 @@ function createPlayer(){
         //update during game
         update: function(cursors){
             //check border
-            if(this.obj.y > game.height){
+            if(this.obj.y > game.height || this.obj.x < -32 || this.obj.x > game.width){
                 reset();
             }
             // Life check
@@ -61,7 +57,7 @@ function createPlayer(){
             if(cursors.left.isDown) arrowSpeed -= 100;
             if(cursors.right.isDown) arrowSpeed += 100;
 
-             //  Set the players velocity (movement)
+             //  Set the animations
             if(!this.isShooting){
                 if(this.obj.body.touching.down) {
                     this.obj.animations.play('right');
@@ -86,13 +82,7 @@ function createPlayer(){
                     this.isShooting=false;
                 }
                 else {
-                    // border control
-                    if(this.obj.body.x + this.obj.body.velocity.x < game.width - 80) {
-                        this.obj.body.velocity.x = gameSpeed + arrowSpeed;
-                    }
-                    else{
-                        this.obj.body.velocity.x = gameSpeed;
-                    }
+                    this.obj.body.velocity.x = gameSpeed;
                 }
             }
             else {
