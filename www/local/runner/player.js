@@ -1,6 +1,6 @@
 function createPlayer(){
     var player={
-        life:100,
+        life:99,
         lifeTanksLeft:1,
         fireRate:100,
         nextFire:game.time.now,
@@ -32,14 +32,14 @@ function createPlayer(){
         //update during game
         update: function(cursors){
             //check border
-            if(this.obj.body.y<0){
+            if(this.obj.y > game.height){
                 reset();
             }
             // Life check
             if(this.life<=0){
                 this.lifeTanksLeft--;
-                if(this.lifeTanksLeft>0){
-                    this.life=100;
+                if(this.lifeTanksLeft > 0){
+                    this.life = 99;
                 }
             }
 

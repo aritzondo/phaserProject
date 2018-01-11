@@ -3,7 +3,7 @@ var game = new Phaser.Game(1200, 600, Phaser.AUTO, '', { preload: preload, creat
 function preload(){
     // Caramos imagenes
     game.load.spritesheet('dude', '../MartinTesting/assets/dude.png', 32, 48);
-    game.load.spritesheet('sky', '../images/metroid_sky.png',248,108);
+    game.load.spritesheet('sky', '../images/background2.png',248,108);
     game.load.spritesheet('ground', '../images/metroid_tiles.png',32,32);
     game.load.spritesheet('samus', '../images/Samus_sprites.png',42,40);
     game.load.image('bullet', '../images/Space%20Lemon.png');
@@ -38,7 +38,7 @@ var jumpUpCost=50;
 var nextUpgrade=3;
 
 //game speed
-var gameSpeed=200;
+var gameSpeed=1000;
 var bgSpeed=0.5;
 
 
@@ -134,19 +134,16 @@ function update() {
 
         // Move the platforms with the camera
         if (platforms.children[0].x < -32) {
+            var rand = game.rnd.between(0,20);
             platform = platforms.children.shift();
             platform.x = game.width;
-            platforms.addChildAt(platform, platforms.length);
+            if(rand > 1) {
+                platforms.addChildAt(platform, platforms.length);
+            }
             checkStuffToAppear();
         }
         game.physics.arcade.overlap(bullets, platforms, bulletHitWall, null, this);
         game.physics.arcade.overlap(bullets, obstacles, bulletHitWall, null, this);
-
-        //Check if the player is out of screen
-        //We could check too in Y if there are falls
-        if (player.obj.x < -32) {
-            reset();
-        }
 
         //move the sky
         sky.tilePosition.x-=bgSpeed;
@@ -163,10 +160,7 @@ function reset(){
             buttons[i].pendingDestroy = true;
         }
         resetPlatforms();
-        player.obj.exists=true;
-        player.obj.x = 32;
-        player.obj.y = game.world.height - 150;
-        player.resetLife();
+
     }
     else{
         //clean screen
@@ -198,13 +192,13 @@ function reset(){
         textButton3 = game.add.text(0, 0, "Higher jump\ncost: "+jumpUpCost, upgradeStyle);
         addTextToButton(textButton3,button3);
     }
-    inMenu=!inMenu;
+    inMenu = !inMenu;
 };
 
 function addTextToButton(text,button){
     button.addChild(text)
-    text.centerX+=button.width/2
-    text.centerY+=button.height/2
+    text.centerX += button.width/2;
+    text.centerY += button.height/2;
 }
 
 //reset the position of the platforms
@@ -237,10 +231,11 @@ function checkStuffToAppear(){
     if(rand == 1){
         if(enemyPull.length > 0){
             var enemy = enemyPull.getFirstDead();
-
-            enemy.reset(game.width - 32, game.height - 150);
-
-            enemy.rotation = this.game.physics.arcade.moveToObject(enemy, player.obj, 250) + 180;
+            //console.log(enemy);
+            if(enemy != null) {
+                enemy.reset(game.width, game.height - 150);
+                enemy.rotation = this.game.physics.arcade.moveToObject(enemy, player.obj, 250) + 180;
+            }
         }
     }
     else if(rand == 2){
@@ -274,6 +269,11 @@ function render () {
 }
 
 function actionOnClick1() {
+    player.obj.exists = true;
+    player.obj.x = 32;
+    player.obj.y = game.world.height - 150;
+    player.resetLife();
+    console.log(player.obj.y);
     reset();
 }
 //action for button2(life upgrade)
