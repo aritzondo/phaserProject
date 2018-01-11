@@ -1,4 +1,4 @@
-var game = new Phaser.Game(800, 600, Phaser.AUTO, '', { preload: preload, create: create, update: update, render:render });
+var game = new Phaser.Game(1200, 600, Phaser.AUTO, '', { preload: preload, create: create, update: update, render:render });
 
 function preload(){
     // Caramos imagenes
@@ -37,6 +37,10 @@ var lifeUpCost=100;
 var jumpUpCost=50;
 var nextUpgrade=3;
 
+//game speed
+var gameSpeed=200;
+var bgSpeed=0.5;
+
 
 function create() {
     //Estalecer cosas iniciales
@@ -48,9 +52,9 @@ function create() {
     game.physics.startSystem(Phaser.Physics.ARCADE);
 
     //  A simple background for our game
-    sky = game.add.sprite(0, 0,'sky');
-    sky.scale.setTo(3,3);
-    sky.fixedToCamera = true;
+    sky = game.add.tileSprite(0, 0,1200,600,'sky');
+    sky.scale.setTo(5,5);
+    //sky.fixedToCamera = true;
 
     // Put the platforms
     platforms = game.add.group();
@@ -61,7 +65,7 @@ function create() {
     {
         var newPlatform = platforms.create(i*32, game.height-32, 'ground');
         newPlatform.body.immovable=true;
-        newPlatform.body.velocity.x=-150;
+        newPlatform.body.velocity.x=-gameSpeed;
         newPlatform.frame=4;
     }
 
@@ -143,6 +147,9 @@ function update() {
         if (player.obj.x < -32) {
             reset();
         }
+
+        //move the sky
+        sky.tilePosition.x-=bgSpeed;
     }
     else{
         //stuff to do on the menu
@@ -240,12 +247,12 @@ function checkStuffToAppear(){
         var obstacle = obstacles.getFirstDead();
         if(obstacle) {
             obstacle.reset(game.width + 14, game.height - 48);
-            obstacle.body.velocity.x = -150;
+            obstacle.body.velocity.x = -gameSpeed;
             obstacle.body.immovable = true;
 
             obstacle = obstacles.getFirstDead();
             obstacle.reset(game.width + 14, game.height - 80);
-            obstacle.body.velocity.x = -150;
+            obstacle.body.velocity.x = -gameSpeed;
             obstacle.body.immovable = true;
         }
     }
@@ -255,8 +262,8 @@ function render () {
 
     //game.debug.text('Active Bullets: ' + bullets.countLiving() + ' / ' + bullets.length, 32, 32);
     game.debug.text(player.life , 32, 32);
-    game.debug.text('Total Score: '+ totalScore,game.width-150,32);
-    game.debug.text('Score: '+ currScore,game.width-150,64);
+    game.debug.text('Total Score: '+ totalScore,game.width-200,32);
+    game.debug.text('Score: '+ currScore,game.width-200,64);
     for(var i=0;i<player.lifeTanksLeft;i++){
         game.debug.geom(player.tanks[i],'#00ff00');
     }

@@ -31,13 +31,18 @@ function createPlayer(){
         },
         //update during game
         update: function(cursors){
+            //check border
+            if(this.obj.body.y<0){
+                reset();
+            }
+            // Life check
             if(this.life<=0){
                 this.lifeTanksLeft--;
                 if(this.lifeTanksLeft>0){
                     this.life=100;
                 }
             }
-            // Life check
+
             if(this.lifeTanksLeft <= 0){
                 //resetear el juego
                 reset();
@@ -83,17 +88,17 @@ function createPlayer(){
                 else {
                     // border control
                     if(this.obj.body.x + this.obj.body.velocity.x < game.width - 80) {
-                        this.obj.body.velocity.x = 150 + arrowSpeed;
-                    }
-                    else if(this.obj.body.y+this.obj.body.velocity.y>=game.height){
-                        reset();
+                        this.obj.body.velocity.x = gameSpeed + arrowSpeed;
                     }
                     else{
-                        this.obj.body.velocity.x = 150;
+                        this.obj.body.velocity.x = gameSpeed;
                     }
                 }
             }
             else {
+                if(!cursors.up.isDown && this.obj.body.velocity.y<0){
+                    this.obj.body.velocity.y=0;
+                }
                 this.obj.body.velocity.x = 0 + arrowSpeed;
             }
         },
