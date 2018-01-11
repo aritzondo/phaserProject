@@ -26,9 +26,16 @@ var inMenu = false;
 //buttons
 var buttons=[];
 //text for button
-var textButton1;
+var textButton1,textButton2,textButton3;
 //functions for buttons
 var functionButtons=[];
+//style for buttons
+var resumeStyle = { font: "36px Arial", align: "center"};
+var upgradeStyle = { font: "24px Arial", align: "center"};
+//variables for the upgrades
+var lifeUpCost=100;
+var jumpUpCost=50;
+var nextUpgrade=3;
 
 
 function create() {
@@ -138,67 +145,61 @@ function update() {
         }
     }
     else{
-        //si estas en el menu
+        //stuff to do on the menu
     }
 };
 
 // Put all the stuff in their place
 function reset(){
     if(inMenu) {//if you were in the menu
-        for(var i=0;i<buttons.length;i++){
-            buttons[i].pendingDestroy=true;
+        for(var i=0;i<buttons.length;i++) {
+            buttons[i].pendingDestroy = true;
         }
-        totalScore += currScore;
-        currScore = 0;
         resetPlatforms();
         player.obj.exists=true;
         player.obj.x = 32;
         player.obj.y = game.world.height - 150;
-        player.life = 99;
+        player.resetLife();
     }
-    else{   // Button shit
+    else{
+        //clean screen
         obstacles.callAll('kill');
         enemyPull.callAll('kill');
         platforms.callAll('kill');
         bullets.callAll('kill');
+        player.resetLife();
         player.obj.exists=false;
+        //update score
+        totalScore += currScore;
+        currScore = 0;
+        //button1
         button1 = game.add.button(game.world.centerX - 95, game.world.centerY+50, 'button', actionOnClick1, this, 2, 1, 0);
         buttons.push(button1)
         button1.scale.setTo(0.5,0.5)
-        var style = { font: "40px Arial", wordWrap: true, wordWrapWidth: button1.width, align: "center"};
-
-        textButton1 = game.add.text(0, 0, "Resume", style);
-        button1.addChild(textButton1)
-        textButton1.centerX+=button1.width/2
-        textButton1.centerY+=button1.height/2
+         textButton1 = game.add.text(0, 0, "Resume", resumeStyle);
+        addTextToButton(textButton1,button1);
+        //button2
         button2 = game.add.button(game.world.centerX - 195, game.world.centerY-50, 'button', actionOnClick2, this, 2, 1, 0);
         buttons.push(button2)
         button2.scale.setTo(0.5,0.5)
+        textButton2 = game.add.text(0, 0, "Increase life\ncost: "+lifeUpCost, upgradeStyle);
+        addTextToButton(textButton2,button2);
+        //button3
         button3 = game.add.button(game.world.centerX +5, game.world.centerY-50, 'button', actionOnClick3, this, 2, 1, 0);
         buttons.push(button3)
         button3.scale.setTo(0.5,0.5)
-
-        /*button.onInputOver.add(over, this);
-        button.onInputOut.add(out, this);
-        button.onInputUp.add(up, this);*/
+        textButton3 = game.add.text(0, 0, "Higher jump\ncost: "+jumpUpCost, upgradeStyle);
+        addTextToButton(textButton3,button3);
     }
     inMenu=!inMenu;
 };
 
-function initButtons(){
-    initButton(1);
+function addTextToButton(text,button){
+    button.addChild(text)
+    text.centerX+=button.width/2
+    text.centerY+=button.height/2
 }
- function initButton(number){
-    switch(number){
-        case 1:
-            button1 = game.add.button(game.world.centerX - 95, game.world.centerY+50, 'button', actionOnClick1, this, 2, 1, 0);
-            button1.scale.setTo(0.5,0.5)
-            var style = { font: "40px Arial", wordWrap: true, wordWrapWidth: button1.width, align: "center"};
-            textButton1 = game.add.text(0, 0, "Resume", style);
-            button1.addChild(textButton1)
-    }
 
- }
 //reset the position of the platforms
 function resetPlatforms(){
     platforms.callAll('revive');
@@ -250,33 +251,39 @@ function checkStuffToAppear(){
     }
 };
 
-function updateEnemies(){
-    for(var i=0;i<enemies.length;i++){
-        enemies[i].update();
-    }
-};
-
-function resetGame(){
-    bullets.setAll('exists',false);
-}
-
 function render () {
 
     //game.debug.text('Active Bullets: ' + bullets.countLiving() + ' / ' + bullets.length, 32, 32);
-    game.debug.text('Life: ' + player.life , 32, 32);
+    game.debug.text(player.life , 32, 32);
     game.debug.text('Total Score: '+ totalScore,game.width-150,32);
     game.debug.text('Score: '+ currScore,game.width-150,64);
+    for(var i=0;i<player.lifeTanksLeft;i++){
+        game.debug.geom(player.tanks[i],'#00ff00');
+    }
+    for(var i=player.lifeTanksLeft;i<player.tanks.length;i++){
+        game.debug.geom(player.tanks[i],'#333333');
+    }
 
 }
 
 function actionOnClick1() {
     reset();
 }
-
+//action for button2(life upgrade)
 function actionOnClick2(){
-    player.life+=100;
+    if(lifeUpCost<totalScore) {
+        player.addTank();
+        totalScore-=lifeUpCost;
+        lifeUpCost *= nextUpgrade;
+        textButton2.setText("Increase life\ncost: "+lifeUpCost);
+    }
 }
-
+//action for button3(jump upgrade)
 function actionOnClick3(){
-    player.jumpHeight+=100;
+    if(jumpUpCost<totalScore) {
+        player.jumpHeight += 50;
+        totalScore -= jumpUpCost;
+        jumpUpCost *= nextUpgrade;
+        textButton3.setText("Higher jump\ncost: "+jumpUpCost);
+    }
 }

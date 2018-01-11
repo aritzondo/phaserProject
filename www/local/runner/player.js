@@ -1,12 +1,13 @@
 function createPlayer(){
     var player={
         life:100,
-        lifeTanks: 0,
+        lifeTanksLeft:1,
         fireRate:100,
         nextFire:game.time.now,
         isShooting:false,
         jumpHeight:600,
         obj:0,
+        tanks:[new Phaser.Rectangle(64,16,24,24)],
         //arrowSpeed: 0,      // Speed result of using left/right
         init: function(){
             // Player
@@ -28,9 +29,16 @@ function createPlayer(){
             this.obj.scale.set(2,2);
 
         },
+        //update during game
         update: function(cursors){
+            if(this.life<=0){
+                this.lifeTanksLeft--;
+                if(this.lifeTanksLeft>0){
+                    this.life=100;
+                }
+            }
             // Life check
-            if(this.life <= 0){
+            if(this.lifeTanksLeft <= 0){
                 //resetear el juego
                 reset();
             }
@@ -77,7 +85,7 @@ function createPlayer(){
                     if(this.obj.body.x + this.obj.body.velocity.x < game.width - 80) {
                         this.obj.body.velocity.x = 150 + arrowSpeed;
                     }
-                    else if(this.obj.body.y+this.obj.body.velocity.y<game.height){
+                    else if(this.obj.body.y+this.obj.body.velocity.y>=game.height){
                         reset();
                     }
                     else{
@@ -88,11 +96,6 @@ function createPlayer(){
             else {
                 this.obj.body.velocity.x = 0 + arrowSpeed;
             }
-
-            // Right border control
-            /*if(this.obj.body.x > game.width - 32){
-                this.obj.body.x = game.width - 32;
-            }*/
         },
         fire:function(){
             this.isShooting=true;
@@ -109,56 +112,16 @@ function createPlayer(){
         hitByEnemy:function(enemy){
             console.log("hit");
             this.life-=10;
+        },
+        resetLife:function(){
+            this.life=100;
+            this.lifeTanksLeft=this.tanks.length;
+        },
+        addTank:function(){
+            this.tanks.push(new Phaser.Rectangle((this.tanks.length+2)*32,16,24,24));
+            this.lifeTanksLeft++;
         }
     }
     player.init();
     return player;
 }
-
-/*
-
-Player = function (game){
-    var x;
-    var y;
-    this.game=game;
-    this.alive=true;
-    game.add.sprite(32, game.world.height - 150, 'samus');
-    game.physics.arcade.enable(this);
-    //Physics
-    this.body.bounce.y = 0;
-    this.body.gravity.y = 300;
-    this.body.collideWorldBounds = true;
-    //Animations
-    //this.obj.animations.add('right', [5, 6, 7, 8], 10, true);
-    //That one 'works' with 41, 50
-    //this.obj.animations.add('right', [140, 141, 142, 143, 144, 145, 146, 147, 148, 149], 20, true);
-    //That one 'works' with 42, 49
-    this.animations.add('right', [126,127,128, 129, 130, 131, 132, 133, 134], 10, true);
-    this.animations.add('jumping', [217, 218, 219, 220, 221, 222, 223, 224], 20, true);
-    //Camera anchor
-    this.anchor.setTo(0.5, 0.5);
-
-
-}
-Player.prototype.update=function(){
-    //  Set the players velocity (movement)
-    if(this.body.touching.down) {
-        this.animations.play('right');
-    }
-    else{
-        this.animations.play('jumping');
-    }
-
-    //  Allow the player to jump if they are touching the ground
-    if (cursors.up.isDown && this.obj.body.touching.down)
-    {
-        this.body.velocity.y = -300;
-    }
-    if(this.body.touching.down){
-        this.body.velocity.x=150;
-    }
-    else{
-        this.body.velocity.x=0;
-    }
-}
- */
