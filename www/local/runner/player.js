@@ -1,12 +1,12 @@
 //Function to create the player
 function createPlayer(){
-    var player={
-        life:99,
-        lifeTanksLeft:1,
-        fireRate:100,
-        nextFire:game.time.now,
-        isShooting:false,
-        jumpHeight:600,
+    var player = {
+        life: 99,
+        lifeTanksLeft: 1,
+        fireRate: 100,
+        nextFire: game.time.now,
+        isShooting: false,
+        jumpHeight: 600,
         obj:0,
         tanks:[new Phaser.Rectangle(64,16,24,24)],
         init: function(){
@@ -54,8 +54,8 @@ function createPlayer(){
 
             // Set speed related to arrows
             var arrowSpeed = 0;
-            if(cursors.left.isDown) arrowSpeed -= 100;
-            if(cursors.right.isDown) arrowSpeed += 100;
+            if(cursors.left.isDown) arrowSpeed -= 150;
+            if(cursors.right.isDown) arrowSpeed += 150;
 
              //  Set the animations
             if(!this.isShooting){
@@ -79,15 +79,15 @@ function createPlayer(){
                 //if you press up(jump)
                 else if (cursors.up.isDown) {
                     this.obj.body.velocity.y = -this.jumpHeight;
-                    this.isShooting=false;
+                    this.isShooting = false;
                 }
-                else {
-                    this.obj.body.velocity.x = gameSpeed;
-                }
+                //else {
+                    this.obj.body.velocity.x = gameSpeed + arrowSpeed;
+                //}
             }
-            else {
+            else {  // Not in the ground
                 if(!cursors.up.isDown && this.obj.body.velocity.y<0){
-                    this.obj.body.velocity.y=0;
+                    this.obj.body.velocity.y = 0;
                 }
                 this.obj.body.velocity.x = 0 + arrowSpeed;
             }

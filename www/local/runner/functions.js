@@ -1,11 +1,21 @@
 
 //reset the position of the platforms
 function resetPlatforms(){
-    platforms.callAll('revive');
+    //platforms.callAll('revive');
     for(var i = 0; i < platforms.children.length; i++)
     {
-        platforms.children[i].x=i*32;
-        platforms.children[i].y=game.height-32;
+        //platforms.children[i].x=i*32;
+        //platforms.children[i].y=game.height-32;
+        newPlatform(i * 32);
+    }
+};
+
+function newPlatform(posX){
+    var platform = platforms.getFirstDead();
+    if(platform) {
+        platform.reset(posX, game.height - 16);
+        platform.body.velocity.x = -gameSpeed;
+        platform.body.immovable = true;
     }
 };
 //****************************//
