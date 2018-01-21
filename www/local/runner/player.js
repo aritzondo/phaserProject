@@ -108,7 +108,7 @@ function createPlayer(){
         },
         hitByEnemy:function(enemy){
             console.log("hit");
-            this.life-=10;
+            this.life -= enemy.damage;
         },
         resetLife:function(){
             this.life=100;

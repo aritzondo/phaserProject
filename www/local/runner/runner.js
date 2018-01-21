@@ -5,9 +5,13 @@ function preload(){
     game.load.spritesheet('sky', '../images/background2.png',248,108);
     game.load.spritesheet('ground', '../images/metroid_tiles.png',32,32);
     game.load.spritesheet('samus', '../images/Samus_sprites.png',42,40);
-    game.load.image('bullet', '../images/Space%20Lemon.png');
-    game.load.image('metroid','../images/Metroid_basic.png')
+    game.load.image('bullet1', '../images/Space%20Lemon.png');
+    game.load.image('bullet2', '../images/metroid_mediumRay.png');
+    game.load.image('bullet3', '../images/metroid_bigRay.png');
+    game.load.image('metroid','../images/Metroid_basic.png');
+    game.load.spritesheet('metroids', '../images/metroid_extended.png', 40, 32);
     game.load.spritesheet('button', '../images/button.png', 330, 130);
+    game.load.spritesheet('ridley', '../images/button.png', 273, 224);
 };
 // Objects
 var sky;
@@ -67,14 +71,6 @@ function create() {
     //platforms.setAll('body.velocity.x', -gameSpeed);
     platforms.setAll('checkWorldBounds', true);
 
-    /*for(var i = 0; i < (game.width/32)+1; i++)
-    {
-        var newPlatform = platforms.create(i*32, game.height-32, 'ground');
-        newPlatform.body.immovable=true;
-        newPlatform.body.velocity.x=-gameSpeed;
-        newPlatform.frame=4;
-    }*/
-
     //The obstacles
     obstacles = game.add.group();
     obstacles.enableBody = true;
@@ -96,7 +92,7 @@ function create() {
     bullets = game.add.group();
     bullets.enableBody = true;
     bullets.physicsBodyType = Phaser.Physics.ARCADE;
-    bullets.createMultiple(30, 'bullet', 0, false);
+    bullets.createMultiple(30, 'bullet1', 0, false);    //Revisar como meter las mejoradas
     bullets.setAll('anchor.x', 0.5);
     bullets.setAll('anchor.y', 0.5);
     bullets.setAll('outOfBoundsKill', true);
@@ -107,7 +103,7 @@ function create() {
     enemyPull = game.add.group();
     enemyPull.enableBody = true;
     enemyPull.physicsBodyType = Phaser.Physics.ARCADE;
-    enemyPull.createMultiple(10, 'metroid');
+    enemyPull.createMultiple(10, 'metroids', 0);
 
     //enemyPull.setAll('update', function(){console.log("hola");});
     //enemyPull.setAll('maxHealth', 3);
