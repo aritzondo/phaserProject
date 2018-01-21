@@ -35,6 +35,7 @@ var upgradeStyle = { font: "24px Arial", align: "center"};
 //variables for the upgrades
 var lifeUpCost = 100;
 var jumpUpCost = 50;
+var maneuverabilityCost = 100;
 var nextUpgrade = 3;
 
 //game speed
@@ -107,6 +108,9 @@ function create() {
     enemyPull.enableBody = true;
     enemyPull.physicsBodyType = Phaser.Physics.ARCADE;
     enemyPull.createMultiple(10, 'metroid');
+
+    //enemyPull.setAll('update', function(){console.log("hola");});
+    //enemyPull.setAll('maxHealth', 3);
     enemyPull.setAll('anchor.x', 0.5);
     enemyPull.setAll('anchor.y', 0.5);
     enemyPull.setAll('outOfBoundsKill', true);
@@ -114,9 +118,9 @@ function create() {
     currScore=0;
 
     // put the functions on the array for the buttons
-    functionButtons[0] = actionOnClick1;
-    functionButtons[1] = actionOnClick2;
-    functionButtons[2] = actionOnClick3;
+    functionButtons[0] = actionStartGame;
+    functionButtons[1] = actionUpgradeHealth;
+    functionButtons[2] = actionUpgradeJump;
 
     //
     //testTimer = new Timer(game);
@@ -138,10 +142,6 @@ function update() {
         game.physics.arcade.overlap(enemyPull, player.obj, enemyHitsPlayer, null, this);
         game.physics.arcade.overlap(enemyPull, bullets, bulletHitEnemy, null, this);
 
-        // Move the platforms with the camera
-        /*if (platforms.children[0].x < -32) {
-            platforms.children.shift();
-        }*/
         if(counter % 6 == 0){
             var rand = game.rnd.between(0,20);
             if(rand > 1) {
@@ -203,23 +203,33 @@ function reset(){
         //update score
         totalScore += currScore;
         currScore = 0;
+
         //button1
-        button1 = game.add.button(game.world.centerX - 95, game.world.centerY+50, 'button', actionOnClick1, this, 2, 1, 0);
+        button1 = game.add.button(game.world.centerX - 95, game.world.centerY+50, 'button', actionStartGame, this, 2, 1, 0);
         buttons.push(button1)
         button1.scale.setTo(0.5,0.5)
         textButton1 = game.add.text(0, 0, "Resume", resumeStyle);
         addTextToButton(textButton1,button1);
-        //button2
-        button2 = game.add.button(game.world.centerX - 195, game.world.centerY-50, 'button', actionOnClick2, this, 2, 1, 0);
+
+        //button2 (helath)
+        button2 = game.add.button(game.world.centerX - 195, game.world.centerY-50, 'button', actionUpgradeHealth, this, 2, 1, 0);
         buttons.push(button2)
         button2.scale.setTo(0.5,0.5)
         textButton2 = game.add.text(0, 0, "Increase life\ncost: " + lifeUpCost, upgradeStyle);
         addTextToButton(textButton2,button2);
-        //button3
-        button3 = game.add.button(game.world.centerX +5, game.world.centerY-50, 'button', actionOnClick3, this, 2, 1, 0);
+
+        //button3 (jump)
+        button3 = game.add.button(game.world.centerX +5, game.world.centerY-50, 'button', actionUpgradeJump, this, 2, 1, 0);
         buttons.push(button3)
         button3.scale.setTo(0.5,0.5)
         textButton3 = game.add.text(0, 0, "Higher jump\ncost: " + jumpUpCost, upgradeStyle);
+        addTextToButton(textButton3,button3);
+
+        //button4 (maneuverability)
+        button3 = game.add.button(game.world.centerX - 195, game.world.centerY-150, 'button', actionUpgradeManeuverability, this, 2, 1, 0);
+        buttons.push(button3)
+        button3.scale.setTo(0.5,0.5)
+        textButton3 = game.add.text(0, 0, "Higher maneuverability\ncost: " + maneuverabilityCost, upgradeStyle);
         addTextToButton(textButton3,button3);
     }
     inMenu = !inMenu;

@@ -4,9 +4,11 @@ function createPlayer(){
         life: 99,
         lifeTanksLeft: 1,
         fireRate: 100,
+        damage: 1,
         nextFire: game.time.now,
         isShooting: false,
         jumpHeight: 600,
+        maneuverSpeed: 150,     //The speed at you manouver on the screen
         obj:0,
         tanks:[new Phaser.Rectangle(64,16,24,24)],
         init: function(){
@@ -54,8 +56,8 @@ function createPlayer(){
 
             // Set speed related to arrows
             var arrowSpeed = 0;
-            if(cursors.left.isDown) arrowSpeed -= 150;
-            if(cursors.right.isDown) arrowSpeed += 150;
+            if(cursors.left.isDown) arrowSpeed -= this.maneuverSpeed;
+            if(cursors.right.isDown) arrowSpeed += this.maneuverSpeed;
 
              //  Set the animations
             if(!this.isShooting){

@@ -32,9 +32,15 @@ function enemyHitsPlayer(plyer,enemy){
 }
 
 function bulletHitEnemy(enemy,bullet){
-    currScore += 100;   // We will later apply a score attribute of the enemy
-    enemy.kill();
+    //
+    //console.log(enemy.health + ", " + player.damage);
+    enemy.health -= player.damage;
     bullet.kill();
+    //
+    if(enemy.health <= 0) {
+        currScore += 100;   // We will later apply a score attribute of the enemy
+        enemy.kill();
+    }
 }
 
 //
@@ -44,20 +50,25 @@ function checkStuffToAppear(){
         if(enemyPull.length > 0){
             var enemy = enemyPull.getFirstDead();
             if(enemy != null) {
-                enemy.reset(game.width, game.height - 150);
-                enemy.rotation = this.game.physics.arcade.moveToObject(enemy, player.obj, 250) + 180;
+                var heightToAppear = game.rnd.between(0, game.height - 150);
+                enemy.reset(game.width, heightToAppear);
+                //console.log(enemy.x + ", " + enemy.y);
+                enemy.health = 3 /*enemy.maxHealth*/;
+                enemy.body.velocity.x = -gameSpeed;
+                //enemy.rotation = this.game.physics.arcade.moveToObject(enemy, player.obj, 250) + 180;
+
             }
         }
     }
     else if(rand == 2){
         var obstacle = obstacles.getFirstDead();
         if(obstacle) {
-            obstacle.reset(game.width + 14, game.height - 48);
+            obstacle.reset(game.width, game.height - 48);
             obstacle.body.velocity.x = -gameSpeed;
             obstacle.body.immovable = true;
 
             obstacle = obstacles.getFirstDead();
-            obstacle.reset(game.width + 14, game.height - 80);
+            obstacle.reset(game.width, game.height - 80);
             obstacle.body.velocity.x = -gameSpeed;
             obstacle.body.immovable = true;
         }
@@ -75,7 +86,7 @@ function addTextToButton(text,button){
 }
 
 //function for button1(Resume the game)
-function actionOnClick1() {
+function actionStartGame() {
     player.obj.exists = true;
     player.obj.x = 32;
     player.obj.y = game.world.height - 150;
@@ -84,7 +95,7 @@ function actionOnClick1() {
     reset();
 }
 //action for button2(life upgrade)
-function actionOnClick2(){
+function actionUpgradeHealth(){
     if(lifeUpCost<totalScore) {
         player.addTank();
         totalScore-=lifeUpCost;
@@ -93,11 +104,21 @@ function actionOnClick2(){
     }
 }
 //action for button3(jump upgrade)
-function actionOnClick3(){
+function actionUpgradeJump(){
     if(jumpUpCost<totalScore) {
         player.jumpHeight += 50;
         totalScore -= jumpUpCost;
         jumpUpCost *= nextUpgrade;
         textButton3.setText("Higher jump\ncost: "+jumpUpCost);
+    }
+}
+
+//action for button3(jump upgrade)
+function actionUpgradeManeuverability(){
+    if(jumpUpCost<totalScore) {
+        player.maneuverSpeed += 50;
+        totalScore -= maneuverabilityCost;
+        maneuverabilityCost *= nextUpgrade;
+        textButton3.setText("Higher jump\ncost: "+maneuverabilityCost);
     }
 }
