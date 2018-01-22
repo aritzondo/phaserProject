@@ -5,7 +5,7 @@ function preload(){
     game.load.spritesheet('sky', '../images/background2.png',248,108);
     game.load.spritesheet('ground', '../images/metroid_tiles.png',32,32);
     game.load.spritesheet('samus', '../images/Samus_sprites.png',42,40);
-    game.load.image('bullet1', '../images/Space%20Lemon.png');
+    game.load.spritesheet('bullet', '../images/metroid_attacks.png',32,8);
     game.load.image('bullet2', '../images/metroid_mediumRay.png');
     game.load.image('bullet3', '../images/metroid_bigRay.png');
     game.load.image('metroid','../images/Metroid_basic.png');
@@ -29,10 +29,8 @@ var cursors,space;
 var inMenu = false;
 //buttons
 var buttons = [];
-//text for button
-var textButton1,textButton2,textButton3;
-//functions for buttons
-var functionButtons = [];
+//the text of the buttons
+var textButton1,textButton2,textButton3,textButton4,textButton5;
 //style for buttons
 var resumeStyle = { font: "36px Arial", align: "center"};
 var upgradeStyle = { font: "24px Arial", align: "center"};
@@ -40,11 +38,15 @@ var upgradeStyle = { font: "24px Arial", align: "center"};
 var lifeUpCost = 100;
 var jumpUpCost = 50;
 var maneuverabilityCost = 100;
+var damageCost = 100;
 var nextUpgrade = 3;
 
 //game speed
 var gameSpeed = 300;
 var bgSpeed = 0.5;
+var enemySpeed = gameSpeed*1.5;
+//the size of the next hole
+var holeLength=0;
 
 // Timer/s
 var testTimer;
@@ -74,7 +76,7 @@ function create() {
     //The obstacles
     obstacles = game.add.group();
     obstacles.enableBody = true;
-    obstacles.createMultiple(10,'ground',0,false);
+    obstacles.createMultiple(20,'ground',0,false);
     obstacles.setAll('anchor.x', 0.5);
     obstacles.setAll('anchor.y', 0.5);
     obstacles.setAll('outOfBoundsKill', true);
@@ -92,7 +94,7 @@ function create() {
     bullets = game.add.group();
     bullets.enableBody = true;
     bullets.physicsBodyType = Phaser.Physics.ARCADE;
-    bullets.createMultiple(30, 'bullet1', 0, false);    //Revisar como meter las mejoradas
+    bullets.createMultiple(30, 'bullet', 0, false);    //Revisar como meter las mejoradas
     bullets.setAll('anchor.x', 0.5);
     bullets.setAll('anchor.y', 0.5);
     bullets.setAll('outOfBoundsKill', true);
@@ -113,11 +115,6 @@ function create() {
     enemyPull.setAll('checkWorldBounds', true);
     currScore=0;
 
-    // put the functions on the array for the buttons
-    functionButtons[0] = actionStartGame;
-    functionButtons[1] = actionUpgradeHealth;
-    functionButtons[2] = actionUpgradeJump;
-
     //
     //testTimer = new Timer(game);
     counter = 0;
@@ -127,7 +124,7 @@ function create() {
 function update() {
     if(!inMenu) {
         // Flujo del jueo
-        //  Collide the player and the stars with the platforms
+        //  Collide the player and with the platforms
         currScore++;
         game.physics.arcade.collide(player.obj, platforms);
         game.physics.arcade.collide(player.obj, obstacles);
@@ -137,14 +134,9 @@ function update() {
         //Check overlaps between enemies, player and bullets
         game.physics.arcade.overlap(enemyPull, player.obj, enemyHitsPlayer, null, this);
         game.physics.arcade.overlap(enemyPull, bullets, bulletHitEnemy, null, this);
+        
+        checkStuffToAppear();
 
-        if(counter % 6 == 0){
-            var rand = game.rnd.between(0,20);
-            if(rand > 1) {
-                newPlatform(game.width);
-            }
-            checkStuffToAppear();
-        }
         game.physics.arcade.overlap(bullets, platforms, bulletHitWall, null, this);
         game.physics.arcade.overlap(bullets, obstacles, bulletHitWall, null, this);
 
@@ -222,11 +214,23 @@ function reset(){
         addTextToButton(textButton3,button3);
 
         //button4 (maneuverability)
-        button3 = game.add.button(game.world.centerX - 195, game.world.centerY-150, 'button', actionUpgradeManeuverability, this, 2, 1, 0);
-        buttons.push(button3)
-        button3.scale.setTo(0.5,0.5)
-        textButton3 = game.add.text(0, 0, "Higher maneuverability\ncost: " + maneuverabilityCost, upgradeStyle);
-        addTextToButton(textButton3,button3);
+        button4 = game.add.button(game.world.centerX - 195, game.world.centerY-150, 'button', actionUpgradeManeuverability, this, 2, 1, 0);
+        buttons.push(button4)
+        button4.scale.setTo(0.5,0.5)
+        textButton4 = game.add.text(0, 0, "Better maneuverability\ncost: " + maneuverabilityCost, upgradeStyle);
+        addTextToButton(textButton4,button4);
+
+        //button5 (damage)
+        button5 = game.add.button(game.world.centerX + 5, game.world.centerY-150, 'button', actionUpgradeDamage, this, 2, 1, 0);
+        buttons.push(button5);
+        button5.scale.setTo(0.5,0.5);
+        if(player.damage==3){
+            textButton5 = game.add.text(0, 0, "Damaged maxed", upgradeStyle)
+        }
+        else{
+            textButton5 = game.add.text(0, 0, "Increase damage \ncost: " + damageCost, upgradeStyle);
+        }
+        addTextToButton(textButton5,button5);
     }
     inMenu = !inMenu;
 };

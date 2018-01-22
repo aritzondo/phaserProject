@@ -47,7 +47,7 @@ function createPlayer(){
             }
 
             // Jump
-            if(space.isDown && this.obj.body.touching.down){
+            if(game.input.activePointer.isDown && this.obj.body.touching.down){
                 this.isShooting=true;
             }
             else{
@@ -74,7 +74,7 @@ function createPlayer(){
 
             //if you are in the ground
             if(this.obj.body.touching.down) {
-                //if you press space(fire)
+                //if you press the mouse(fire)
                 if (game.input.activePointer.isDown) {
                     this.fire();
                 }
@@ -101,9 +101,10 @@ function createPlayer(){
                 this.nextFire = game.time.now + this.fireRate;
 
                 var bullet = bullets.getFirstExists(false);
+                bullet.frame = this.damage-1;
 
                 bullet.reset(this.obj.x, this.obj.y);
-                bullet.rotation = game.physics.arcade.moveToPointer(bullet, 1000, game.input.activePointer, 500);
+                bullet.rotation = game.physics.arcade.moveToPointer(bullet, 1000, game.input.activePointer);
             }
         },
         hitByEnemy:function(enemy){
