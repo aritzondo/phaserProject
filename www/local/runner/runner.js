@@ -1,17 +1,16 @@
 var game = new Phaser.Game(1200, 600, Phaser.AUTO, '', { preload: preload, create: create, update: update, render:render });
 
 function preload(){
-    // Caramos imagenes
+    // Cargamos imagenes
     game.load.spritesheet('sky', '../images/background2.png',248,108);
     game.load.spritesheet('ground', '../images/metroid_tiles.png',32,32);
     game.load.spritesheet('samus', '../images/Samus_sprites.png',42,40);
     game.load.spritesheet('bullet', '../images/metroid_attacks.png',32,8);
-    game.load.image('bullet2', '../images/metroid_mediumRay.png');
-    game.load.image('bullet3', '../images/metroid_bigRay.png');
-    game.load.image('metroid','../images/Metroid_basic.png');
     game.load.spritesheet('metroids', '../images/metroid_extended.png', 40, 32);
     game.load.spritesheet('button', '../images/button.png', 330, 130);
-    game.load.spritesheet('ridley', '../images/button.png', 273, 224);
+    game.load.spritesheet('ridley', '../images/Ridley_sprites.png', 273, 224);
+    game.load.spritesheet('fireBall', '../images/metroid_fireball.png', 96, 24);
+    game.load.spritesheet('explosion', '../images/metroid_explosion.png', 32, 32);
 };
 // Objects
 var sky;
@@ -20,20 +19,28 @@ var platforms;
 var obstacles;
 var bullets;
 var enemyPull;
-var enemies;
+//var enemies;
+var explosions;
+var boss;
+
 // Score
 var currScore = 0;
 var totalScore = 0;
+
 //keys
 var cursors,space;
 var inMenu = false;
+
 //buttons
 var buttons = [];
+
 //the text of the buttons
 var textButton1,textButton2,textButton3,textButton4,textButton5;
+
 //style for buttons
 var resumeStyle = { font: "36px Arial", align: "center"};
 var upgradeStyle = { font: "24px Arial", align: "center"};
+
 //variables for the upgrades
 var lifeUpCost = 100;
 var jumpUpCost = 50;
@@ -101,19 +108,29 @@ function create() {
     bullets.setAll('checkWorldBounds', true);
 
     //create one enemy
-    enemies = [];
+    //enemies = [];
     enemyPull = game.add.group();
     enemyPull.enableBody = true;
     enemyPull.physicsBodyType = Phaser.Physics.ARCADE;
     enemyPull.createMultiple(10, 'metroids', 0);
-
     //enemyPull.setAll('update', function(){console.log("hola");});
     //enemyPull.setAll('maxHealth', 3);
     enemyPull.setAll('anchor.x', 0.5);
     enemyPull.setAll('anchor.y', 0.5);
     enemyPull.setAll('outOfBoundsKill', true);
     enemyPull.setAll('checkWorldBounds', true);
-    currScore=0;
+    currScore = 0;
+
+    // Explosions
+    explosions = game.add.group();
+    explosions.createMultiple(10, 'explosion', 0);
+    explosions.setAll('anchor.x', 0.5);
+    explosions.setAll('anchor.y', 0.5);
+    explosions.enableBody = true;
+    explosions.physicsBodyType = Phaser.Physics.ARCADE;
+
+    //Ridley
+    boss = game.add.sprite(game.width, game.height/2, 'ridley', 0);
 
     //
     //testTimer = new Timer(game);
@@ -125,7 +142,7 @@ function update() {
     if(!inMenu) {
         // Flujo del jueo
         //  Collide the player and with the platforms
-        currScore++;
+        //currScore++;
         game.physics.arcade.collide(player.obj, platforms);
         game.physics.arcade.collide(player.obj, obstacles);
 

@@ -38,8 +38,13 @@ function bulletHitEnemy(enemy,bullet){
     bullet.kill();
     //
     if(enemy.health <= 0) {
-        currScore += 100;   // We will later apply a score attribute of the enemy
+        currScore += enemy.score;   // We will later apply a score attribute of the enemy
         enemy.kill();
+        var newExplosion = explosions.create(enemy.x, enemy.y, 'explosion');
+        newExplosion.animations.add('explode');
+        newExplosion.play('explode', 10, false, true);
+        //newExplosion.enableBody(true);
+        newExplosion.body.velocity.x = -gameSpeed;
     }
 }
 
@@ -191,6 +196,7 @@ function spawnEnemy(enemyToSpawn){
             enemyToSpawn.scale.setTo(1, 1);
             enemyToSpawn.frame = 0;
             enemyToSpawn.damage = 10;
+            enemyToSpawn.score = 10;
             break;
         case 5: case 6: case 7: case 8:
             enemyToSpawn.health = 5;
@@ -198,6 +204,7 @@ function spawnEnemy(enemyToSpawn){
             enemyToSpawn.scale.setTo(1.2, 1.2);
             enemyToSpawn.frame = 1;
             enemyToSpawn.damage = 20;
+            enemyToSpawn.score = 20;
             break;
         case 9: case 10: case 11:
             enemyToSpawn.health = 10;
@@ -205,6 +212,7 @@ function spawnEnemy(enemyToSpawn){
             enemyToSpawn.scale.setTo(1.5, 1.5);
             enemyToSpawn.frame = 2;
             enemyToSpawn.damage = 30;
+            enemyToSpawn.score = 20;
             break;
         case 12: case 13:
             enemyToSpawn.health = 15;
@@ -212,6 +220,7 @@ function spawnEnemy(enemyToSpawn){
             enemyToSpawn.scale.setTo(2.0, 2.0);
             enemyToSpawn.frame = 3;
             enemyToSpawn.damage = 40;
+            enemyToSpawn.score = 20;
             break;
         case 14:
             enemyToSpawn.health = 20;
@@ -219,9 +228,19 @@ function spawnEnemy(enemyToSpawn){
             enemyToSpawn.scale.setTo(2.5, 2.5);
             enemyToSpawn.frame = 4;
             enemyToSpawn.damage = 50;
+            enemyToSpawn.score = 20;
             break;
         default:
             //Shit
             break;
     }
+}
+
+//*****************************//
+//--Functions for --//
+//*****************************//
+
+// To the pool
+function sendToPool(object){
+    object.kill();
 }
