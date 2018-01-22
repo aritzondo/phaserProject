@@ -8,7 +8,7 @@ function preload(){
     game.load.spritesheet('bullet', '../images/metroid_attacks.png',32,8);
     game.load.spritesheet('metroids', '../images/metroid_extended.png', 40, 32);
     game.load.spritesheet('button', '../images/button.png', 330, 130);
-    game.load.spritesheet('ridley', '../images/Ridley_sprites.png', 273, 224);
+    game.load.spritesheet('ridley', '../images/Ridley_sprites.png', 270, 224);
     game.load.spritesheet('fireBall', '../images/metroid_fireball.png', 96, 24);
     game.load.spritesheet('explosion', '../images/metroid_explosion.png', 32, 32);
 };
@@ -101,20 +101,16 @@ function create() {
     bullets = game.add.group();
     bullets.enableBody = true;
     bullets.physicsBodyType = Phaser.Physics.ARCADE;
-    bullets.createMultiple(30, 'bullet', 0, false);    //Revisar como meter las mejoradas
-    bullets.setAll('anchor.x', 0.5);
+    bullets.createMultiple(30, 'bullet', 0, false);    
     bullets.setAll('anchor.y', 0.5);
     bullets.setAll('outOfBoundsKill', true);
     bullets.setAll('checkWorldBounds', true);
 
-    //create one enemy
-    //enemies = [];
+    //create the enemy pull
     enemyPull = game.add.group();
     enemyPull.enableBody = true;
     enemyPull.physicsBodyType = Phaser.Physics.ARCADE;
     enemyPull.createMultiple(10, 'metroids', 0);
-    //enemyPull.setAll('update', function(){console.log("hola");});
-    //enemyPull.setAll('maxHealth', 3);
     enemyPull.setAll('anchor.x', 0.5);
     enemyPull.setAll('anchor.y', 0.5);
     enemyPull.setAll('outOfBoundsKill', true);
@@ -131,6 +127,8 @@ function create() {
 
     //Ridley
     boss = game.add.sprite(game.width, game.height/2, 'ridley', 0);
+    boss.animations.add('ridley');
+    boss.play('ridley',10,true);
 
     //
     //testTimer = new Timer(game);
