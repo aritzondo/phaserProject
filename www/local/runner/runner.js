@@ -9,7 +9,7 @@ function preload(){
     game.load.spritesheet('metroids', '../images/metroid_extended.png', 40, 32);
     game.load.spritesheet('button', '../images/button.png', 330, 130);
     game.load.spritesheet('ridley', '../images/Ridley_sprites.png', 270, 224);
-    game.load.spritesheet('fireBall', '../images/metroid_fireball.png', 96, 24);
+    game.load.spritesheet('fireBall', '../images/metroid_fireball.png', 24, 24);
     game.load.spritesheet('explosion', '../images/metroid_explosion.png', 32, 32);
 };
 // Objects
@@ -21,6 +21,7 @@ var bullets;
 var enemyPull;
 //var enemies;
 var explosions;
+var fireballs;
 var boss;
 
 // Score
@@ -58,6 +59,8 @@ var holeLength=0;
 // Timer/s
 var testTimer;
 var counter;
+
+var victory = false;
 
 function create() {
     //Estalecer cosas iniciales
@@ -126,9 +129,17 @@ function create() {
     explosions.physicsBodyType = Phaser.Physics.ARCADE;
 
     //Ridley
-    boss = game.add.sprite(game.width, game.height/2, 'ridley', 0);
-    boss.animations.add('ridley');
-    boss.play('ridley',10,true);
+    boss = createBoss();
+
+    //  Fireballs
+    fireballs = game.add.group();
+    fireballs.enableBody = true;
+    fireballs.physicsBodyType = Phaser.Physics.ARCADE;
+    fireballs.createMultiple(30, 'fireBall', 0, false);
+    fireballs.setAll('anchor.y', 0.5);
+    fireballs.setAll('outOfBoundsKill', true);
+    fireballs.setAll('checkWorldBounds', true);
+    //fireballs.setAll('scale', true);
 
     //
     //testTimer = new Timer(game);
@@ -145,6 +156,7 @@ function update() {
         game.physics.arcade.collide(player.obj, obstacles);
 
         player.update(cursors);
+        boss.update();
 
         //Check overlaps between enemies, player and bullets
         game.physics.arcade.overlap(enemyPull, player.obj, enemyHitsPlayer, null, this);
@@ -154,6 +166,11 @@ function update() {
 
         game.physics.arcade.overlap(bullets, platforms, bulletHitWall, null, this);
         game.physics.arcade.overlap(bullets, obstacles, bulletHitWall, null, this);
+
+        // Boss ones
+        game.physics.arcade.overlap(boss.obj, bullets, bulletHitBoss, null, this);
+        game.physics.arcade.overlap(fireballs, obstacles, bulletHitWall, null, this);
+        game.physics.arcade.overlap(fireballs, player.obj, enemyHitsPlayer, null, this);
 
         //move the sky
         sky.tilePosition.x-=bgSpeed;
@@ -184,7 +201,10 @@ function render () {
 
 // Put all the stuff in their place
 function reset(){
-    if(inMenu) {//if you were in the menu
+    if(victory){
+
+    }
+    else if(inMenu) {//if you were in the menu
         for(var i = 0;i < buttons.length; i++) {
             buttons[i].pendingDestroy = true;
         }
@@ -201,8 +221,10 @@ function reset(){
         enemyPull.callAll('kill');
         platforms.callAll('kill');
         bullets.callAll('kill');
+        fireballs.callAll('kill');
         player.resetLife();
-        player.obj.exists=false;
+        player.obj.exists = false;
+        boss.resetBoss();
         //update score
         totalScore += currScore;
         currScore = 0;

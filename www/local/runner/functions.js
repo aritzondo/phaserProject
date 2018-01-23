@@ -23,11 +23,13 @@ function newPlatform(posX){
 //****************************//
 
 function bulletHitWall(bullet,platform){
+    createExplosion(bullet.x, bullet.y);
     bullet.kill();
 };
 
 function enemyHitsPlayer(plyer,enemy){
     enemy.kill();
+    createExplosion(enemy.x, enemy.y);
     player.hitByEnemy(enemy);
 }
 
@@ -36,16 +38,28 @@ function bulletHitEnemy(enemy,bullet){
     //console.log(enemy.health + ", " + player.damage);
     enemy.health -= player.damage;
     bullet.kill();
+    createExplosion(bullet.x + 10, bullet.y);
     //
     if(enemy.health <= 0) {
         currScore += enemy.score;   // We will later apply a score attribute of the enemy
         enemy.kill();
-        var newExplosion = explosions.create(enemy.x, enemy.y, 'explosion');
-        newExplosion.animations.add('explode');
-        newExplosion.play('explode', 10, false, true);
-        //newExplosion.enableBody(true);
-        newExplosion.body.velocity.x = -gameSpeed;
+        //createExplosion(enemy.x, enemy.y);
     }
+}
+
+function bulletHitBoss(bossObj, bullet){
+    boss.health -= player.damage;
+    console.log(boss.health);
+    createExplosion(bullet.x + 50, bullet.y);
+    bullet.kill();
+}
+
+function createExplosion(x, y){
+    var newExplosion = explosions.create(x, y, 'explosion');
+    newExplosion.animations.add('explode');
+    newExplosion.play('explode', 10, false, true);
+    //newExplosion.enableBody(true);
+    newExplosion.body.velocity.x = -gameSpeed;
 }
 
 //*****************************//
@@ -70,7 +84,7 @@ function actionStartGame() {
 }
 //action for button2(life upgrade)
 function actionUpgradeHealth(){
-    if(lifeUpCost<totalScore) {
+    if(lifeUpCost <= totalScore) {
         player.addTank();
         totalScore-=lifeUpCost;
         lifeUpCost *= nextUpgrade;
@@ -79,7 +93,7 @@ function actionUpgradeHealth(){
 }
 //action for button3(jump upgrade)
 function actionUpgradeJump(){
-    if(jumpUpCost<totalScore) {
+    if(jumpUpCost <= totalScore) {
         player.jumpHeight += 50;
         totalScore -= jumpUpCost;
         jumpUpCost *= nextUpgrade;
@@ -89,7 +103,7 @@ function actionUpgradeJump(){
 
 //action for button4(maneuverability upgrade)
 function actionUpgradeManeuverability(){
-    if(maneuverabilityCost<totalScore) {
+    if(maneuverabilityCost <= totalScore) {
         player.maneuverSpeed += 50;
         totalScore -= maneuverabilityCost;
         maneuverabilityCost *= nextUpgrade;
@@ -99,7 +113,7 @@ function actionUpgradeManeuverability(){
 
 //action for button5 (damage upgrade)
 function actionUpgradeDamage(){
-    if(damageCost<totalScore && player.damage<3){
+    if(damageCost <= totalScore && player.damage < 3){
         player.damage += 1;
         totalScore -= damageCost;
         if(player.damage==3){
@@ -119,25 +133,33 @@ function actionUpgradeDamage(){
 //create holes and spawn enemies and obstacles
 function checkStuffToAppear()
 {
+    // Floor and platforms
     if(counter % 6 == 0){
         holeLength--;
-        if(holeLength<0){
+        if(holeLength < 0){
             var rand = game.rnd.between(0,50);
-            if(rand>0) {
+            if(rand > 0) {
                 newPlatform(game.width);
                 if(rand<5){
                     checkObstaclesToAppear();
                 }
             }
             else{
-                holeLength=game.rnd.between(4,5);
+                holeLength = game.rnd.between(4,5);
             }
         }
     }
+    // Enemies
     var rand = game.rnd.between(0,3);
-    if(rand==0){
+    if(rand == 0){
         checkEnemiesToAppear();
-    }    
+    }
+    // Boss
+    /*if(counter % 2000 == 0){
+        //boss.active = !boss.active;
+        boss.activate();
+        //console.log(boss.active);
+    }*/
 }
 
 //create random enemies
