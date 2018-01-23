@@ -28,6 +28,7 @@ function createPlayer(){
             this.obj.scale.set(2,2);
             //
             this.shootSound = game.add.audio('blaster');
+            this.shootSound.volume = 0.3;
         },
         //update during game
         update: function(cursors){

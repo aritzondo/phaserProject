@@ -242,6 +242,7 @@ function reset(){
             music.stop();
         }
         music = game.add.audio('escape');
+        music.volume = 0.2;
         music.play();
 
         for(var i = 0;i < buttons.length; i++) {
