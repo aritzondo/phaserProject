@@ -8,7 +8,7 @@ function createBoss(){
         alive: true,
         movementSpeed: 200,     //For going in/out the screen
         damage: 20,
-        timeActive: 200,
+        timeActive: 100,
         currentActiveTime: 0,
         init: function(){
             this.obj = game.add.sprite(game.width, game.height/2, 'ridley', 0);
@@ -27,8 +27,10 @@ function createBoss(){
                 // And the check
             if(this.currentActiveTime > this.timeActive){
                 this.active = !this.active;
+                this.damage *= 1.5;
                 this.currentActiveTime = 0;
                 this.timeActive += 200;
+                this.roar();
             }
 
             //What to do with active
@@ -63,22 +65,55 @@ function createBoss(){
 
         },
         resetBoss: function(){
+            //console.log('reseting boss');
             this.obj.x = 1350;
             this.obj.body.velocity.x = 0;
             this.active = false;
             this.fireCoolDown = 0;
             this.health = 999;
-            this.timeActive = 200;
-        },
-        activate: function () {
-            this.active = true;
-            this.damage += 10;
+            this.timeActive = 100;
+            this.currentActiveTime = 0;
+            this.damage = 20;
         },
         kill: function (){
             victory = true;
             this.resetBoss();
             reset();
-        }
+        },
+        roar: function(){
+          var roarToUse = game.rnd.between(0, 6);
+          var roar;
+          switch (roarToUse){
+              case 0:
+                  roar = game.add.audio('Ridley1');
+                  roar.play();
+                  break;
+              case 1:
+                  roar = game.add.audio('Ridley2');
+                  roar.play();
+                  break;
+              case 2:
+                  roar = game.add.audio('Ridley3');
+                  roar.play();
+                  break;
+              case 3:
+                  roar = game.add.audio('Ridley4');
+                  roar.play();
+                  break;
+              case 4:
+                  roar = game.add.audio('Ridley5');
+                  roar.play();
+                  break;
+              case 5:
+                  roar = game.add.audio('Ridley6');
+                  roar.play();
+                  break;
+              case 6:
+                  roar = game.add.audio('Ridley7');
+                  roar.play();
+                  break;
+          }
+        },
     }
     boss.init();
     return boss;

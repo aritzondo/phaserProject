@@ -11,6 +11,24 @@ function preload(){
     game.load.spritesheet('ridley', '../images/Ridley_sprites.png', 270, 224);
     game.load.spritesheet('fireBall', '../images/metroid_fireball.png', 24, 24);
     game.load.spritesheet('explosion', '../images/metroid_explosion.png', 32, 32);
+
+    // Cargamos audios
+        //Musica
+    game.load.audio('menu', '../sounds/MenuMusic.mp3');
+    game.load.audio('escape', '../sounds/EscapeMusic.mp3');
+    game.load.audio('victory', '../sounds/GameMusic.mp3');
+        //Ridley
+    game.load.audio('Ridley1', '../sounds/RidleyScream(1).mp3');
+    game.load.audio('Ridley2', '../sounds/RidleyScream(2).mp3');
+    game.load.audio('Ridley3', '../sounds/RidleyScream(3).mp3');
+    game.load.audio('Ridley4', '../sounds/RidleyScream(4).mp3');
+    game.load.audio('Ridley5', '../sounds/RidleyScream(5).mp3');
+    game.load.audio('Ridley6', '../sounds/RidleyScream(6).mp3');
+    game.load.audio('Ridley7', '../sounds/RidleyScream(7).mp3');
+        //Otros efectos
+    game.load.audio('blaster', '../sounds/blaster.mp3');
+    game.load.audio('explosion', '../sounds/explosion.mp3');
+
 };
 // Objects
 var sky;
@@ -60,6 +78,8 @@ var holeLength=0;
 var testTimer;
 var counter;
 
+var music;
+
 var victory = false;
 
 function create() {
@@ -104,7 +124,7 @@ function create() {
     bullets = game.add.group();
     bullets.enableBody = true;
     bullets.physicsBodyType = Phaser.Physics.ARCADE;
-    bullets.createMultiple(30, 'bullet', 0, false);    
+    bullets.createMultiple(30, 'bullet', 0, false);
     bullets.setAll('anchor.y', 0.5);
     bullets.setAll('outOfBoundsKill', true);
     bullets.setAll('checkWorldBounds', true);
@@ -122,11 +142,12 @@ function create() {
 
     // Explosions
     explosions = game.add.group();
-    explosions.createMultiple(10, 'explosion', 0);
-    explosions.setAll('anchor.x', 0.5);
-    explosions.setAll('anchor.y', 0.5);
     explosions.enableBody = true;
     explosions.physicsBodyType = Phaser.Physics.ARCADE;
+    explosions.createMultiple(50, 'explosion', 0);
+    explosions.setAll('anchor.x', 0.5);
+    explosions.setAll('anchor.y', 0.5);
+
 
     //Ridley
     boss = createBoss();
@@ -140,6 +161,7 @@ function create() {
     fireballs.setAll('outOfBoundsKill', true);
     fireballs.setAll('checkWorldBounds', true);
     //fireballs.setAll('scale', true);
+
 
     //
     //testTimer = new Timer(game);
@@ -176,6 +198,11 @@ function update() {
         sky.tilePosition.x-=bgSpeed;
 
         //
+        var expX = game.rnd.between(0,100);
+        var expY = game.rnd.between(0,game.height - 32);
+        createExplosion(expX, expY);
+
+        //
         counter ++;
     }
     else{
@@ -190,10 +217,10 @@ function render () {
     game.debug.text(counter , 32, 64);
     game.debug.text('Total Score: '+ totalScore,game.width-200,32);
     game.debug.text('Score: '+ currScore,game.width-200,64);
-    for(var i=0;i<player.lifeTanksLeft;i++){
+    for(var i = 0; i<player.lifeTanksLeft; i++){
         game.debug.geom(player.tanks[i],'#00ff00');
     }
-    for(var i=player.lifeTanksLeft;i<player.tanks.length;i++){
+    for(var i = player.lifeTanksLeft; i < player.tanks.length;i++){
         game.debug.geom(player.tanks[i],'#333333');
     }
 
@@ -202,9 +229,22 @@ function render () {
 // Put all the stuff in their place
 function reset(){
     if(victory){
-
+        // Music
+        if(music) {
+            music.stop();
+        }
+        music = game.add.audio('victory');
+        music.play();
     }
     else if(inMenu) {//if you were in the menu
+
+        // Music
+        if(music) {
+            music.stop();
+        }
+        music = game.add.audio('escape');
+        music.play();
+
         for(var i = 0;i < buttons.length; i++) {
             buttons[i].pendingDestroy = true;
         }
@@ -216,6 +256,13 @@ function reset(){
         resetPlatforms();
     }
     else{
+        // Music
+        if(music) {
+            music.stop();
+        }
+        music = game.add.audio('menu');
+        music.play();
+
         //clean screen
         obstacles.callAll('kill');
         enemyPull.callAll('kill');

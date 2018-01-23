@@ -45,6 +45,8 @@ function bulletHitEnemy(enemy,bullet){
         enemy.kill();
         //createExplosion(enemy.x, enemy.y);
     }
+    var explosionSound = game.add.audio('explosion');
+    explosionSound.play();
 }
 
 function bulletHitBoss(bossObj, bullet){
@@ -52,14 +54,20 @@ function bulletHitBoss(bossObj, bullet){
     console.log(boss.health);
     createExplosion(bullet.x + 50, bullet.y);
     bullet.kill();
+    var explosionSound = game.add.audio('explosion');
+    explosionSound.play();
 }
 
 function createExplosion(x, y){
-    var newExplosion = explosions.create(x, y, 'explosion');
-    newExplosion.animations.add('explode');
-    newExplosion.play('explode', 10, false, true);
-    //newExplosion.enableBody(true);
-    newExplosion.body.velocity.x = -gameSpeed;
+    var newExplosion = explosions.getFirstDead();
+    //console.log(newExplosion);
+    if(newExplosion) {
+        newExplosion.reset(x, y);
+        newExplosion.animations.add('explode');
+        newExplosion.play('explode', 10, false, true);
+        newExplosion.enableBody = true;
+        newExplosion.body.velocity.x = -gameSpeed;
+    }
 }
 
 //*****************************//
@@ -234,7 +242,7 @@ function spawnEnemy(enemyToSpawn){
             enemyToSpawn.scale.setTo(1.5, 1.5);
             enemyToSpawn.frame = 2;
             enemyToSpawn.damage = 30;
-            enemyToSpawn.score = 20;
+            enemyToSpawn.score = 30;
             break;
         case 12: case 13:
             enemyToSpawn.health = 15;
@@ -242,7 +250,7 @@ function spawnEnemy(enemyToSpawn){
             enemyToSpawn.scale.setTo(2.0, 2.0);
             enemyToSpawn.frame = 3;
             enemyToSpawn.damage = 40;
-            enemyToSpawn.score = 20;
+            enemyToSpawn.score = 40;
             break;
         case 14:
             enemyToSpawn.health = 20;
@@ -250,7 +258,7 @@ function spawnEnemy(enemyToSpawn){
             enemyToSpawn.scale.setTo(2.5, 2.5);
             enemyToSpawn.frame = 4;
             enemyToSpawn.damage = 50;
-            enemyToSpawn.score = 20;
+            enemyToSpawn.score = 50;
             break;
         default:
             //Shit

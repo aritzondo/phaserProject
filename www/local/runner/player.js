@@ -11,6 +11,7 @@ function createPlayer(){
         maneuverSpeed: 150,     //The speed at you manouver on the screen
         obj:0,
         tanks:[new Phaser.Rectangle(64,16,24,24)],
+        shootSound: undefined,
         init: function(){
             // Player
             this.obj = game.add.sprite(32, game.world.height - 150, 'samus');
@@ -25,7 +26,8 @@ function createPlayer(){
             //Camera anchor
             this.obj.anchor.setTo(0.5, 0.5);
             this.obj.scale.set(2,2);
-
+            //
+            this.shootSound = game.add.audio('blaster');
         },
         //update during game
         update: function(cursors){
@@ -48,10 +50,10 @@ function createPlayer(){
 
             // Jump
             if(game.input.activePointer.isDown && this.obj.body.touching.down){
-                this.isShooting=true;
+                this.isShooting = true;
             }
             else{
-                this.isShooting=false;
+                this.isShooting = false;
             }
 
             // Set speed related to arrows
@@ -105,10 +107,11 @@ function createPlayer(){
 
                 bullet.reset(this.obj.x, this.obj.y);
                 bullet.rotation = game.physics.arcade.moveToPointer(bullet, 1000, game.input.activePointer);
+                this.shootSound.play();
             }
         },
         hitByEnemy:function(enemy){
-            console.log("hit");
+            console.log("hit " + enemy.damage);
             this.life -= enemy.damage;
         },
         resetLife:function(){
