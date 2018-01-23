@@ -1,7 +1,8 @@
 //
 function createBoss(){
     var boss = {
-        health: 999,
+        health: 0,
+        maxHealth: 333,
         fireRate: 100,
         fireCoolDown: 0,
         active: false,
@@ -10,14 +11,17 @@ function createBoss(){
         damage: 20,
         timeActive: 100,
         currentActiveTime: 0,
+        safePosition: 0,
+        //mask: undefined,
         init: function(){
             this.obj = game.add.sprite(game.width, game.height/2, 'ridley', 0);
             this.obj.animations.add('ridley');
             this.obj.play('ridley',10,true);
             this.obj.anchor.setTo(0.5, 0.5);
+            this.obj.scale.setTo(2, 2);
             game.physics.arcade.enable(this.obj);
-            //
-            this.obj.x = 1350;
+            this.safePosition = game.width + (game.width/3);
+            this.obj.x = this.safePosition;
         },
         update: function () {
             // Manage active
@@ -27,7 +31,7 @@ function createBoss(){
                 // And the check
             if(this.currentActiveTime > this.timeActive){
                 this.active = !this.active;
-                this.damage *= 1.5;
+                this.damage += 5;
                 this.currentActiveTime = 0;
                 this.timeActive += 200;
                 this.roar();
@@ -35,7 +39,7 @@ function createBoss(){
 
             //What to do with active
             if(this.active){
-                if(this.obj.x > 1000){
+                if(this.obj.x > game.width*3/4){
                     this.obj.body.velocity.x = -this.movementSpeed;
                 }
                 else{   //Aqui manejamos los disparos
@@ -55,22 +59,22 @@ function createBoss(){
                 }
             }
             else{
-                if(this.obj.x < 1350){
+                if(this.obj.x < this.safePosition){
                     this.obj.body.velocity.x = this.movementSpeed;
                 }
                 else{
                     this.obj.body.velocity.x = 0;
                 }
             }
-
+            this.changeTint();
         },
         resetBoss: function(){
             //console.log('reseting boss');
-            this.obj.x = 1350;
+            this.obj.x = this.safePosition;
             this.obj.body.velocity.x = 0;
             this.active = false;
             this.fireCoolDown = 0;
-            this.health = 999;
+            this.health = this.maxHealth;
             this.timeActive = 100;
             this.currentActiveTime = 0;
             this.damage = 20;
@@ -113,6 +117,23 @@ function createBoss(){
                   roar.play();
                   break;
           }
+        },
+        changeTint: function(){
+            // Tint to show damage
+            var healthProportion = Math.floor(this.health / this.maxHealth * 255);
+            var colorValue = Phaser.Color.componentToHex(healthProportion);
+            var tintColor = "0x" + "ff" + colorValue + colorValue;
+            this.obj.tint = tintColor;
+        },
+        applyDamage: function(playerDamage){
+            boss.health -= playerDamage;
+            boss.changeTint();
+            if(boss.health > 0)
+                boss.changeTint();
+            else{
+                victory = true;
+                reset();
+            }
         },
     }
     boss.init();

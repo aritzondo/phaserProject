@@ -1,8 +1,8 @@
-var game = new Phaser.Game(1200, 600, Phaser.AUTO, '', { preload: preload, create: create, update: update, render:render });
+var game = new Phaser.Game(window.innerWidth, window.innerHeight, Phaser.AUTO, '', { preload: preload, create: create, update: update, render:render });
 
 function preload(){
     // Cargamos imagenes
-    game.load.spritesheet('sky', '../images/background2.png',248,108);
+    game.load.spritesheet('sky', '../images/background2.png',256,160);
     game.load.spritesheet('ground', '../images/metroid_tiles.png',32,32);
     game.load.spritesheet('samus', '../images/Samus_sprites.png',42,40);
     game.load.spritesheet('bullet', '../images/metroid_attacks.png',32,8);
@@ -44,10 +44,10 @@ var boss;
 
 // Score
 var currScore = 0;
-var totalScore = 0;
+var totalScore = 10000;     //Revisar
 
 //keys
-var cursors,space;
+var cursors,space,wasd;
 var inMenu = false;
 
 //buttons
@@ -90,7 +90,7 @@ function create() {
 
     //  A simple background for our game
     sky = game.add.tileSprite(0, 0,1200,600,'sky');
-    sky.scale.setTo(5,5);
+    sky.scale.setTo(4,4);
 
     // Put the platforms
     platforms = game.add.group();
@@ -117,6 +117,7 @@ function create() {
     //  Our controls.
     cursors = game.input.keyboard.createCursorKeys();
     space = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
+    wasd = game.input.keyboard.addKeys( { 'up': Phaser.KeyCode.W, 'down': Phaser.KeyCode.S, 'left': Phaser.KeyCode.A, 'right': Phaser.KeyCode.D } );
     // Player
     player = createPlayer();
 
@@ -170,6 +171,10 @@ function create() {
 };
 
 function update() {
+
+    //move the sky
+    sky.tilePosition.x-=bgSpeed;
+
     if(!inMenu) {
         // Flujo del jueo
         //  Collide the player and with the platforms
@@ -194,9 +199,6 @@ function update() {
         game.physics.arcade.overlap(fireballs, obstacles, bulletHitWall, null, this);
         game.physics.arcade.overlap(fireballs, player.obj, enemyHitsPlayer, null, this);
 
-        //move the sky
-        sky.tilePosition.x-=bgSpeed;
-
         //
         var expX = game.rnd.between(0,100);
         var expY = game.rnd.between(0,game.height - 32);
@@ -204,9 +206,6 @@ function update() {
 
         //
         counter ++;
-    }
-    else{
-        //stuff to do on the menu
     }
 };
 

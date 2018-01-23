@@ -58,8 +58,8 @@ function createPlayer(){
 
             // Set speed related to arrows
             var arrowSpeed = 0;
-            if(cursors.left.isDown) arrowSpeed -= this.maneuverSpeed;
-            if(cursors.right.isDown) arrowSpeed += this.maneuverSpeed;
+            if(cursors.left.isDown || wasd.left.isDown) arrowSpeed -= this.maneuverSpeed;
+            if(cursors.right.isDown || wasd.right.isDown) arrowSpeed += this.maneuverSpeed;
 
              //  Set the animations
             if(!this.isShooting){
@@ -81,7 +81,7 @@ function createPlayer(){
                     this.fire();
                 }
                 //if you press up(jump)
-                else if (cursors.up.isDown) {
+                else if (cursors.up.isDown || wasd.up.isDown) {
                     this.obj.body.velocity.y = -this.jumpHeight;
                     this.isShooting = false;
                 }
@@ -90,7 +90,7 @@ function createPlayer(){
                 //}
             }
             else {  // Not in the ground
-                if(!cursors.up.isDown && this.obj.body.velocity.y<0){
+                if(!(cursors.up.isDown || wasd.up.isDown) && this.obj.body.velocity.y<0){
                     this.obj.body.velocity.y = 0;
                 }
                 this.obj.body.velocity.x = 0 + arrowSpeed;

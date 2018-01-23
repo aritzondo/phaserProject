@@ -50,12 +50,17 @@ function bulletHitEnemy(enemy,bullet){
 }
 
 function bulletHitBoss(bossObj, bullet){
-    boss.health -= player.damage;
-    console.log(boss.health);
-    createExplosion(bullet.x + 50, bullet.y);
-    bullet.kill();
-    var explosionSound = game.add.audio('explosion');
-    explosionSound.play();
+    // First check that is in screen
+    if(bossObj.x < boss.safePosition) {
+        //
+        boss.applyDamage(player.damage);
+        //
+        createExplosion(bullet.x + 50, bullet.y);
+        bullet.kill();
+        //
+        var explosionSound = game.add.audio('explosion');
+        explosionSound.play();
+    }
 }
 
 function createExplosion(x, y){
@@ -162,12 +167,6 @@ function checkStuffToAppear()
     if(rand == 0){
         checkEnemiesToAppear();
     }
-    // Boss
-    /*if(counter % 2000 == 0){
-        //boss.active = !boss.active;
-        boss.activate();
-        //console.log(boss.active);
-    }*/
 }
 
 //create random enemies
