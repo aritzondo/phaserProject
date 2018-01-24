@@ -132,7 +132,7 @@ function createBoss(){
                 boss.changeTint();
             else{
                 victory = true;
-                reset();
+                reset();          // Usamos cuenta atrás?
             }
         },
     }

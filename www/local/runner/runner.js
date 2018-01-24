@@ -54,9 +54,11 @@ var inMenu = false;
 var buttons = [];
 
 //the text of the buttons
+var titleText1, titleText2, victoryText1;
 var textButton1,textButton2,textButton3,textButton4,textButton5;
 
 //style for buttons
+var titleStyle = { font: "72px Arial", align: "center", color: "#ffffff"};
 var resumeStyle = { font: "36px Arial", align: "center"};
 var upgradeStyle = { font: "24px Arial", align: "center"};
 
@@ -200,12 +202,17 @@ function update() {
         game.physics.arcade.overlap(fireballs, player.obj, enemyHitsPlayer, null, this);
 
         //
-        var expX = game.rnd.between(0,100);
-        var expY = game.rnd.between(0,game.height - 32);
+        var expX = game.rnd.between(0, 100);
+        var expY = game.rnd.between(0, game.height - 32);
         createExplosion(expX, expY);
 
         //
         counter ++;
+    }
+    else if(victory){
+        var expX = game.rnd.between(boss.obj.x - 100, boss.obj.x + 100);
+        var expY = game.rnd.between(boss.obj.y - 100, boss.obj.y + 100);
+        createExplosion(expX, expY);
     }
 };
 
@@ -216,7 +223,7 @@ function render () {
     game.debug.text(counter , 32, 64);
     game.debug.text('Total Score: '+ totalScore,game.width-200,32);
     game.debug.text('Score: '+ currScore,game.width-200,64);
-    for(var i = 0; i<player.lifeTanksLeft; i++){
+    for(var i = 0; i < player.lifeTanksLeft; i++){
         game.debug.geom(player.tanks[i],'#00ff00');
     }
     for(var i = player.lifeTanksLeft; i < player.tanks.length;i++){
@@ -234,6 +241,9 @@ function reset(){
         }
         music = game.add.audio('victory');
         music.play();
+
+        // Victory text
+        titleText1 = game.add.text(game.width/2 - 200, 100, "VICTORY", titleStyle);
     }
     else if(inMenu) {//if you were in the menu
 
@@ -275,6 +285,10 @@ function reset(){
         //update score
         totalScore += currScore;
         currScore = 0;
+
+        // Title
+        titleText1 = game.add.text(game.width/2 - 200, 100, "HURRY UP", titleStyle);
+        titleText2 = game.add.text(game.width/2 - 200, 200, "SAMUS", titleStyle);
 
         //button1
         button1 = game.add.button(game.world.centerX - 95, game.world.centerY+50, 'button', actionStartGame, this, 2, 1, 0);
