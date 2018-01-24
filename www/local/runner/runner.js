@@ -58,7 +58,7 @@ var titleText1, titleText2, victoryText1;
 var textButton1,textButton2,textButton3,textButton4,textButton5;
 
 //style for buttons
-var titleStyle = { font: "72px Arial", align: "center", color: "#ffffff"};
+var titleStyle = { font: "72px 'Geostar Fill'", align: "center", fill: "white"};
 var resumeStyle = { font: "36px Arial", align: "center"};
 var upgradeStyle = { font: "24px Arial", align: "center"};
 
@@ -240,6 +240,7 @@ function reset(){
             music.stop();
         }
         music = game.add.audio('victory');
+        music.loop=true;
         music.play();
 
         // Victory text
@@ -252,6 +253,7 @@ function reset(){
             music.stop();
         }
         music = game.add.audio('escape');
+        music.loop=true;
         music.volume = 0.2;
         music.play();
 
@@ -271,6 +273,7 @@ function reset(){
             music.stop();
         }
         music = game.add.audio('menu');
+        music.loop=true;
         music.play();
 
         //clean screen
@@ -312,14 +315,14 @@ function reset(){
         addTextToButton(textButton3,button3);
 
         //button4 (maneuverability)
-        button4 = game.add.button(game.world.centerX - 195, game.world.centerY-150, 'button', actionUpgradeManeuverability, this, 2, 1, 0);
+        button4 = game.add.button(game.world.centerX - 395, game.world.centerY-50, 'button', actionUpgradeManeuverability, this, 2, 1, 0);
         buttons.push(button4)
         button4.scale.setTo(0.5,0.5)
         textButton4 = game.add.text(0, 0, "Better maneuverability\ncost: " + maneuverabilityCost, upgradeStyle);
         addTextToButton(textButton4,button4);
 
         //button5 (damage)
-        button5 = game.add.button(game.world.centerX + 5, game.world.centerY-150, 'button', actionUpgradeDamage, this, 2, 1, 0);
+        button5 = game.add.button(game.world.centerX + 200, game.world.centerY-50, 'button', actionUpgradeDamage, this, 2, 1, 0);
         buttons.push(button5);
         button5.scale.setTo(0.5,0.5);
         if(player.damage==3){
