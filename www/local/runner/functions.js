@@ -269,7 +269,60 @@ function spawnEnemy(enemyToSpawn){
 //--Functions for --//
 //*****************************//
 
-// To the pool
-function sendToPool(object){
-    object.kill();
+// Clean game stuff
+function cleanGameStuff(){
+    obstacles.callAll('kill');
+    enemyPull.callAll('kill');
+    platforms.callAll('kill');
+    bullets.callAll('kill');
+    fireballs.callAll('kill');
+    player.resetLife();
+    player.obj.exists = false;
+}
+
+//
+function setTitleAndButtons(){
+    // Title
+    titleText1 = game.add.text(game.width/2 - 250, 100, "HURRY UP", titleStyle);
+    titleText2 = game.add.text(game.width/2 - 250, 200, "SAMUS!", titleStyle);
+
+    //button1
+    button1 = game.add.button(game.world.centerX - 95, game.world.centerY+50, 'button', actionStartGame, this, 2, 1, 0);
+    buttons.push(button1)
+    button1.scale.setTo(0.5,0.5)
+    textButton1 = game.add.text(0, 0, "Resume", resumeStyle);
+    addTextToButton(textButton1,button1);
+
+    //button2 (health)
+    button2 = game.add.button(game.world.centerX - 195, game.world.centerY-50, 'button', actionUpgradeHealth, this, 2, 1, 0);
+    buttons.push(button2)
+    button2.scale.setTo(0.5,0.5)
+    textButton2 = game.add.text(0, 0, "Increase life\ncost: " + lifeUpCost, upgradeStyle);
+    addTextToButton(textButton2,button2);
+
+    //button3 (jump)
+    button3 = game.add.button(game.world.centerX +5, game.world.centerY-50, 'button', actionUpgradeJump, this, 2, 1, 0);
+    buttons.push(button3)
+    button3.scale.setTo(0.5,0.5)
+    textButton3 = game.add.text(0, 0, "Higher jump\ncost: " + jumpUpCost, upgradeStyle);
+    addTextToButton(textButton3,button3);
+
+    //button4 (maneuverability)
+    button4 = game.add.button(game.world.centerX - 395, game.world.centerY-50, 'button', actionUpgradeManeuverability, this, 2, 1, 0);
+    buttons.push(button4)
+    button4.scale.setTo(0.5,0.5)
+    textButton4 = game.add.text(0, 0, "Better maneuverability\ncost: " + maneuverabilityCost, upgradeStyle);
+    addTextToButton(textButton4,button4);
+
+    //button5 (damage)
+    button5 = game.add.button(game.world.centerX + 200, game.world.centerY-50, 'button', actionUpgradeDamage, this, 2, 1, 0);
+    buttons.push(button5);
+    button5.scale.setTo(0.5,0.5);
+    if(player.damage == 3){
+        textButton5 = game.add.text(0, 0, "Damaged maxed", upgradeStyle)
+    }
+    else{
+        textButton5 = game.add.text(0, 0, "Increase damage \ncost: " + damageCost, upgradeStyle);
+    }
+    addTextToButton(textButton5,button5);
 }

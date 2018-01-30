@@ -44,7 +44,7 @@ var boss;
 
 // Score
 var currScore = 0;
-var totalScore = 10000;     //Revisar
+var totalScore = 0;     //Revisar
 
 //keys
 var cursors,space,wasd;
@@ -54,11 +54,12 @@ var inMenu = false;
 var buttons = [];
 
 //the text of the buttons
-var titleText1, titleText2, victoryText1;
+var titleText1, titleText2, victoryText1, victoryText2;
 var textButton1,textButton2,textButton3,textButton4,textButton5;
 
 //style for buttons
 var titleStyle = { font: "72px 'Geostar Fill'", align: "center", fill: "white"};
+var titleStyleSmall = { font: "36px 'Geostar Fill'", align: "center", fill: "white"};
 var resumeStyle = { font: "36px Arial", align: "center"};
 var upgradeStyle = { font: "24px Arial", align: "center"};
 
@@ -77,7 +78,6 @@ var enemySpeed = gameSpeed*1.5;
 var holeLength=0;
 
 // Timer/s
-var testTimer;
 var counter;
 
 var music;
@@ -220,7 +220,6 @@ function render () {
 
     //game.debug.text('Active Bullets: ' + bullets.countLiving() + ' / ' + bullets.length, 32, 32);
     game.debug.text(player.life , 32, 32);
-    game.debug.text(counter , 32, 64);
     game.debug.text('Total Score: '+ totalScore,game.width-200,32);
     game.debug.text('Score: '+ currScore,game.width-200,64);
     for(var i = 0; i < player.lifeTanksLeft; i++){
@@ -235,6 +234,10 @@ function render () {
 // Put all the stuff in their place
 function reset(){
     if(victory){
+
+        //
+        cleanGameStuff();
+
         // Music
         if(music) {
             music.stop();
@@ -244,7 +247,8 @@ function reset(){
         music.play();
 
         // Victory text
-        titleText1 = game.add.text(game.width/2 - 200, 100, "VICTORY", titleStyle);
+        victoryText1 = game.add.text(game.width/2 - 200, 200, "VICTORY", titleStyle);
+        victoryText2 = game.add.text(game.width/2 - 450, 500, "PRESS F5 TO IMPROVE YOUR MARK", titleStyleSmall);
     }
     else if(inMenu) {//if you were in the menu
 
@@ -253,15 +257,20 @@ function reset(){
             music.stop();
         }
         music = game.add.audio('escape');
-        music.loop=true;
+        music.loop = true;
         music.volume = 0.2;
         music.play();
 
+        // Destroy the buttons
         for(var i = 0;i < buttons.length; i++) {
             buttons[i].pendingDestroy = true;
         }
 
-        //
+        // Destroy the texts
+        titleText1.pendingDestroy = true;
+        titleText2.pendingDestroy = true;
+
+        // Reset the counter
         counter = 0;
 
         //
@@ -277,61 +286,15 @@ function reset(){
         music.play();
 
         //clean screen
-        obstacles.callAll('kill');
-        enemyPull.callAll('kill');
-        platforms.callAll('kill');
-        bullets.callAll('kill');
-        fireballs.callAll('kill');
-        player.resetLife();
-        player.obj.exists = false;
+        cleanGameStuff();
+            // This one goes appart for victory stuff
         boss.resetBoss();
-        //update score
+            //update score
         totalScore += currScore;
         currScore = 0;
 
-        // Title
-        titleText1 = game.add.text(game.width/2 - 200, 100, "HURRY UP", titleStyle);
-        titleText2 = game.add.text(game.width/2 - 200, 200, "SAMUS", titleStyle);
-
-        //button1
-        button1 = game.add.button(game.world.centerX - 95, game.world.centerY+50, 'button', actionStartGame, this, 2, 1, 0);
-        buttons.push(button1)
-        button1.scale.setTo(0.5,0.5)
-        textButton1 = game.add.text(0, 0, "Resume", resumeStyle);
-        addTextToButton(textButton1,button1);
-
-        //button2 (helath)
-        button2 = game.add.button(game.world.centerX - 195, game.world.centerY-50, 'button', actionUpgradeHealth, this, 2, 1, 0);
-        buttons.push(button2)
-        button2.scale.setTo(0.5,0.5)
-        textButton2 = game.add.text(0, 0, "Increase life\ncost: " + lifeUpCost, upgradeStyle);
-        addTextToButton(textButton2,button2);
-
-        //button3 (jump)
-        button3 = game.add.button(game.world.centerX +5, game.world.centerY-50, 'button', actionUpgradeJump, this, 2, 1, 0);
-        buttons.push(button3)
-        button3.scale.setTo(0.5,0.5)
-        textButton3 = game.add.text(0, 0, "Higher jump\ncost: " + jumpUpCost, upgradeStyle);
-        addTextToButton(textButton3,button3);
-
-        //button4 (maneuverability)
-        button4 = game.add.button(game.world.centerX - 395, game.world.centerY-50, 'button', actionUpgradeManeuverability, this, 2, 1, 0);
-        buttons.push(button4)
-        button4.scale.setTo(0.5,0.5)
-        textButton4 = game.add.text(0, 0, "Better maneuverability\ncost: " + maneuverabilityCost, upgradeStyle);
-        addTextToButton(textButton4,button4);
-
-        //button5 (damage)
-        button5 = game.add.button(game.world.centerX + 200, game.world.centerY-50, 'button', actionUpgradeDamage, this, 2, 1, 0);
-        buttons.push(button5);
-        button5.scale.setTo(0.5,0.5);
-        if(player.damage==3){
-            textButton5 = game.add.text(0, 0, "Damaged maxed", upgradeStyle)
-        }
-        else{
-            textButton5 = game.add.text(0, 0, "Increase damage \ncost: " + damageCost, upgradeStyle);
-        }
-        addTextToButton(textButton5,button5);
+        //
+        setTitleAndButtons();
     }
     inMenu = !inMenu;
 };

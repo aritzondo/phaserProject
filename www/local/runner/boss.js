@@ -22,6 +22,7 @@ function createBoss(){
             game.physics.arcade.enable(this.obj);
             this.safePosition = game.width + (game.width/3);
             this.obj.x = this.safePosition;
+            this.obj.z = 100;
         },
         update: function () {
             // Manage active
@@ -132,6 +133,7 @@ function createBoss(){
                 boss.changeTint();
             else{
                 victory = true;
+                this.obj.body.velocity.x = 0;
                 reset();          // Usamos cuenta atrás?
             }
         },

@@ -99,12 +99,12 @@ function createPlayer(){
         },
         fire:function(){
             this.isShooting=true;
-            if (game.time.now > this.nextFire&& bullets.countDead() > 0)
+            if (game.time.now > this.nextFire && bullets.countDead() > 0)
             {
                 this.nextFire = game.time.now + this.fireRate;
 
                 var bullet = bullets.getFirstExists(false);
-                bullet.frame = this.damage-1;
+                bullet.frame = this.damage - 1;
 
                 bullet.reset(this.obj.x, this.obj.y);
                 bullet.rotation = game.physics.arcade.moveToPointer(bullet, 1000, game.input.activePointer);
@@ -112,12 +112,12 @@ function createPlayer(){
             }
         },
         hitByEnemy:function(enemy){
-            console.log("hit " + enemy.damage);
+            //console.log("hit " + enemy.damage);
             this.life -= enemy.damage;
         },
         resetLife:function(){
-            this.life=100;
-            this.lifeTanksLeft=this.tanks.length;
+            this.life = 99;
+            this.lifeTanksLeft = this.tanks.length;
         },
         addTank:function(){
             this.tanks.push(new Phaser.Rectangle((this.tanks.length+2)*32,16,24,24));
